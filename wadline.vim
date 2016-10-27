@@ -6,8 +6,10 @@
 " Inspiration drawn from itchyny/lightline.vim
 
 " Most colors ripped from lightline solarized_dark scheme.
-hi Wadline_Blue   ctermfg=230 ctermbg=33
-hi Wadline_Green  ctermfg=230 ctermbg=DarkGreen
+hi Wadline_Blue     ctermfg=230 ctermbg=33
+hi Wadline_Red      ctermfg=230 ctermbg=124
+hi Wadline_Green    ctermfg=230 ctermbg=64
+hi Wadline_Magenta  ctermfg=230 ctermbg=125
 " TODO: more colors, more mode_colors values...
 
 hi clear StatusLine
@@ -58,7 +60,11 @@ let s:wadline = {
       \ },
       \ 'mode_colors': {
       \   'n': 'Wadline_Blue',
-      \   'i': 'Wadline_Green'
+      \   'i': 'Wadline_Green',
+      \   'v': 'Wadline_Magenta',
+      \   'V': 'Wadline_Magenta',
+      \   "\<C-v>": 'Wadline_Magenta',
+      \   'R': 'Wadline_Red',
       \ },
       \ 'highlight': {
       \ },
