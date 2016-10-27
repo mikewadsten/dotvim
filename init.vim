@@ -246,7 +246,10 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
 
 " }}
 
-" Colorscheme {
+" Colorscheme {{
+
+  " Disable Background Color Erase, per http://superuser.com/a/562423
+  set t_ut=
 
   let g:solarized_termcolors=256
   let g:solarized_termtrans = 0
@@ -280,7 +283,7 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
   " My own personal statusline 'plugin'
   call LoadDotvimFile('wadline.vim')
 
-" }
+" }}
 
 " Filetypes {
 
