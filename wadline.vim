@@ -53,7 +53,7 @@ function! wadline#git() abort
   endif
   if strlen(_) > 18
     " Avoid too-long heads
-    let _ = strcharpart(_, 0, 18) . '...'
+    let _ = printf('%.18s...', _)
   endif
   return printf('  %s ', _)
 endfunction
