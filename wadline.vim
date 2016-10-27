@@ -11,10 +11,11 @@ hi Wadline_Red      ctermfg=230 ctermbg=124
 hi Wadline_Green    ctermfg=230 ctermbg=64
 hi Wadline_Magenta  ctermfg=230 ctermbg=125
 " TODO: more colors, more mode_colors values...
+hi Wadline_Git      ctermfg=7   ctermbg=8
 
 hi clear StatusLine
 hi StatusLine   term=NONE cterm=NONE ctermbg=235
-hi StatusLineNC term=NONE cterm=NONE ctermfg=0 ctermbg=233
+hi StatusLineNC term=NONE cterm=NONE ctermfg=8 ctermbg=233
 
 function! wadline#mode() abort
   let modemap = {
@@ -44,19 +45,37 @@ function! wadline#fileinfo() abort
   return _
 endfunction
 
+function! wadline#git() abort
+  let _ = fugitive#head()
+  if _ == ''
+    " Just return empty if there's no head
+    return ''
+  endif
+  if strlen(_) > 18
+    " Avoid too-long heads
+    let _ = strcharpart(_, 0, 18) . '...'
+  endif
+  return printf('  %s ', _)
+endfunction
+
 let s:wadline = {
       \ 'active': {
-      \   'left':  ['mode', 'buffers'],
+      \   'left':  ['mode', 'git', 'buffers'],
       \   'right': ['fileinfo', 'percent', 'lineinfo']
+      \ },
+      \ 'inactive': {
+      \   'left': ['dimfile'], 'right': []
       \ },
       \ 'exprs': {
       \   'mode': 'wadline#mode()',
+      \   'git': 'wadline#git()',
       \   'buffers': 'wadline#buffers()',
       \   'fileinfo': 'wadline#fileinfo()',
       \ },
       \ 'formats': {
       \   'percent': '%3p%%',
       \   'lineinfo': '%3l:%-2v',
+      \   'dimfile': '%F'
       \ },
       \ 'mode_colors': {
       \   'n': 'Wadline_Blue',
@@ -67,6 +86,8 @@ let s:wadline = {
       \   'R': 'Wadline_Red',
       \ },
       \ 'highlight': {
+      \   'git': 'Wadline_Git',
+      \   'dimfile': 'StatusLineNC'
       \ },
       \ }
 
@@ -106,17 +127,21 @@ function! s:make_pieces(pieces, sep) abort
   return join(l:bits, a:sep)
 endfunction
 
-function! s:build_line()
+function! s:build_line(active)
   let l:_ = '%{wadline#highlight()}'
-  let l:_ .= s:make_pieces(s:wadline.active.left, '') . '%=' . s:make_pieces(s:wadline.active.right, ' | ')
+  let l:side = a:active ? s:wadline.active : s:wadline.inactive
+  let l:_ .= s:make_pieces(l:side.left, '') . '%=' . s:make_pieces(l:side.right, ' | ')
   return l:_
 endfunction
 
 function! wadline#update()
-  let &statusline = s:build_line()
+  let curwin = winnr()
+  let lines = winnr('$') == 1 ? [s:build_line(1)] : [s:build_line(1), s:build_line(0)]
+  for w in range(1, winnr('$'))
+    call setwinvar(w, '&statusline', lines[w != curwin])
+  endfor
 endfunction
 
-" TODO: Inactive windows should have their statuslines dimmed.
 augroup wadline
   autocmd!
   autocmd WinEnter,BufWinEnter,FileType,ColorScheme,SessionLoadPost * call wadline#update()
