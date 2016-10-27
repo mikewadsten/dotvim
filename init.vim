@@ -96,13 +96,14 @@ set wildmode=list:longest,full
 set whichwrap=b,s,h,l,<,>,[,]
 
 " Default indentation settings. Wow, so PEP-8.
-if 0  " TODO: Do this based on filetype...
-  set tabstop=4
-  set shiftwidth=4
-  set softtabstop=4
+if 1  " TODO: Do this based on filetype...
+  setl tabstop=4
+  setl shiftwidth=4
+  setl softtabstop=4
 else
   set tabstop=2 shiftwidth=2 softtabstop=2
 endif
+
 set expandtab
 set shiftround
 
@@ -288,6 +289,8 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
   autocmd! Filetype cpp setlocal complete-=i
 
   autocmd! Filetype cpp,html,xml let b:AutoPairs = extend({'<': '>'}, g:AutoPairs, 'keep')
+
+  autocmd! Filetype vim setl ts=2 sw=2 sts=2
 
 " }
 
