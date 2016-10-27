@@ -55,6 +55,8 @@ function! wadline#git() abort
     " Avoid too-long heads
     let _ = printf('%.18s...', _)
   endif
+  " Vim strips one leading space from value, because %{} is treated
+  " as a 'flag' (src/buffer.c:4141). Work around that by having 2 spaces.
   return printf('  %s ', _)
 endfunction
 
