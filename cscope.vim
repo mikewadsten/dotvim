@@ -5,6 +5,11 @@ function! s:CscopeAdd(...)
     return ''
   endif
 
+  if !filereadable(a:1)
+    echo "File not readable:" a:1
+    return ''
+  endif
+
   if cscope_connection(2, a:1)
     echo "You wanted to add:"
     echo repeat(' ', 11) . join(a:000)
@@ -13,8 +18,11 @@ function! s:CscopeAdd(...)
     cscope show
   else
     execute "cscope add " . join(a:000)
+    echo "cscope database opened"
   endif
 endfunction
+
+set nocscopeverbose
 
 " TODO: Intelligent completion based on which arg you're doing?
 " Like this? http://vi.stackexchange.com/a/6696
