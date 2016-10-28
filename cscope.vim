@@ -1,4 +1,4 @@
-function! s:CscopeAdd(...)
+function! s:CscopeAdd(...) abort
   let argcount = a:0
   if argcount < 1
     echo ":CscopeAdd <file> [<pre-path> [<flags>]]"
@@ -10,6 +10,15 @@ function! s:CscopeAdd(...)
     return ''
   endif
 
+  if argcount >= 2
+    if a:2[0] == '-'
+      " Flags!
+    elseif !isdirectory(a:2)
+      echo "Not a directory:" a:2
+      return ''
+    endif
+  endif
+
   if cscope_connection(2, a:1)
     echo "You wanted to add:"
     echo repeat(' ', 11) . join(a:000)
@@ -17,8 +26,14 @@ function! s:CscopeAdd(...)
     echo ""
     cscope show
   else
-    execute "cscope add " . join(a:000)
-    echo "cscope database opened"
+    let save_csverb=&cscopeverbose
+    set cscopeverbose
+    try
+      execute "cscope add " . join(a:000)
+      echo "cscope database opened"
+    finally
+      let &csverb=save_csverb
+    endtry
   endif
 endfunction
 
