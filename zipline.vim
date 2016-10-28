@@ -10,7 +10,11 @@ hi Zipline_Blue     ctermfg=230 ctermbg=33
 hi Zipline_Red      ctermfg=230 ctermbg=124
 hi Zipline_Green    ctermfg=230 ctermbg=64
 hi Zipline_Magenta  ctermfg=230 ctermbg=125
-hi Zipline_Git      ctermfg=7   ctermbg=8
+hi Zipline_Orange   ctermfg=230 ctermbg=166
+hi Zipline_Git      ctermfg=230 ctermbg=239
+
+hi Zipline_Gray     ctermfg=233 ctermbg=244
+hi Zipline_Grayer   ctermfg=247 ctermbg=239
 
 " Give mode highlight groups unique names
 hi link Zipline_Mode_Normal   Zipline_Blue
@@ -19,11 +23,15 @@ hi link Zipline_Mode_Visual   Zipline_Magenta
 hi link Zipline_Mode_Replace  Zipline_Red
 
 hi clear StatusLine
-hi StatusLine   term=NONE cterm=NONE ctermfg=230 ctermbg=240
-hi StatusLineNC term=NONE cterm=NONE ctermfg=10  ctermbg=236
-hi ZiplineNC_Filename term=NONE cterm=NONE ctermfg=4 ctermbg=236
+hi StatusLine   term=NONE cterm=NONE ctermfg=245 ctermbg=235
+hi StatusLineNC term=NONE cterm=NONE ctermfg=10  ctermbg=235
+hi ZiplineNC_Filename term=NONE cterm=NONE ctermfg=4 ctermbg=235
+hi Zipline_StlOrangeText ctermfg=166 ctermbg=235
 
 function! zipline#mode() abort
+  if getwinvar(winnr(), '&filetype') == 'help'
+    return ''  " Addressed in zipline#helpmode()
+  endif
   let modemap = {
         \ 'n': 'normal', 'i': 'insert', 'R': 'replace', 'v': 'visual',
         \ 'V': 'V-line', "\<C-v>": 'V-block', 'c': 'command',
@@ -33,7 +41,18 @@ function! zipline#mode() abort
   return '  ' . toupper(get(modemap, l:mode, printf("MODE? %s", l:mode))) . ' '
 endfunction
 
+function! zipline#helpmode() abort
+  if getwinvar(winnr(), '&filetype') == 'help'
+    return '   HELP  '
+  else
+    return ''
+  endif
+endfunction
+
 function! zipline#buffers() abort
+  if getwinvar(winnr(), '&filetype') == 'help'
+    return expand('%')
+  endif
   call bufferline#refresh_status()
   " bufferline#get_status_string() gets the content that we'd put in
   " &statusline. We're computing that here now, though, so...
@@ -43,10 +62,18 @@ function! zipline#buffers() abort
   return b.c.a
 endfunction
 
+function! zipline#inactive_dir() abort
+  if &filetype == "help"
+    return ''
+  else
+    return expand('%:p:~:.:h') . '/'
+  endif
+endfunction
+
 function! zipline#fileinfo() abort
-  let _ = &filetype
+  let _ = (&filetype !=# "" ? &filetype : 'no ft')
   if &fileformat != 'unix'
-    let _ .= printf(' (%s)', toupper(&fileformat))
+    let _ = printf('%s | %s', &fileformat, _)
   endif
   return _
 endfunction
@@ -66,24 +93,29 @@ function! zipline#git() abort
   return printf('  %s ', _)
 endfunction
 
+let s:hgroup_activemode = 'Zipline_activemode'
+let s:hgroup_activebuf = 'Zipline_activebuffers'
 let s:zipline = {
       \ 'active': {
-      \   'left':  ['mode', 'git', 'buffers'],
-      \   'right': ['fileinfo', 'percent', 'lineinfo']
+      \   'left':  ['helpmode', 'mode', 'git', 'spacer1', 'buffers'],
+      \   'right': ['fileinfo', 'spacer1', 'percent', 'lineinfo']
       \ },
       \ 'inactive': {
-      \   'left': ['dimfile'], 'right': []
+      \   'left': ['dimfile'], 'right': ['dimright']
       \ },
       \ 'exprs': {
       \   'mode': 'zipline#mode()',
+      \   'helpmode': 'zipline#helpmode()',
       \   'git': 'zipline#git()',
       \   'buffers': 'zipline#buffers()',
       \   'fileinfo': 'zipline#fileinfo()',
       \ },
       \ 'formats': {
-      \   'percent': '%3p%%',
-      \   'lineinfo': '%3l:%-2v',
-      \   'dimfile': '###### %{expand("%:p:~:.:h")}/%0*%#ZiplineNC_Filename#%t'
+      \   'percent': ' %3p%% ',
+      \   'lineinfo': ' %3l:%-2v ',
+      \   'dimfile': '######## %{zipline#inactive_dir()}%0*%#ZiplineNC_Filename#%t',
+      \   'dimright': '########',
+      \   'spacer1': ' ',
       \ },
       \ 'mode_colors': {
       \   'n': 'Zipline_Mode_Normal',
@@ -98,21 +130,33 @@ let s:zipline = {
       \   't': 'Zipline_Mode_Insert'
       \ },
       \ 'highlight': {
+      \   'helpmode': 'Zipline_Orange',
       \   'git': 'Zipline_Git',
-      \   'dimfile': 'StatusLineNC'
+      \   'buffers': s:hgroup_activebuf,
+      \   'percent': 'Zipline_Grayer',
+      \   'lineinfo': 'Zipline_Gray',
+      \   'dimfile': 'StatusLineNC',
+      \   'dimright': 'StatusLineNC'
       \ },
       \ }
 
 let s:save_mode = ''
-let s:hgroup_activemode = 'Zipline_activemode'
+let s:save_ft = ''
+
+execute 'hi link ' . s:hgroup_activemode . ' Zipline_Mode_Normal'
+execute 'hi link ' . s:hgroup_activebuf . ' StatusLine'
 
 function! zipline#highlight() abort
   " Relink s:hgroup_activemode according to new mode
-  if s:save_mode != mode()
+  if s:save_mode != mode() || s:save_ft != &ft
     let s:save_mode = mode()
+    let s:save_ft = &ft
 
     let hgroup = get(s:zipline.mode_colors, mode(), 'Zipline_Mode_Normal')
     execute printf('hi link %s %s', s:hgroup_activemode, hgroup)
+
+    let hgroup = &ft=="help" ? "Zipline_StlOrangeText" : "StatusLine"
+    execute printf('hi link %s %s', s:hgroup_activebuf, hgroup)
   endif
   return ''
 endfunction
@@ -131,8 +175,7 @@ function! s:make_pieces(pieces, sep) abort
     elseif has_key(s:zipline.formats, piece)
       let expr = s:zipline.formats[piece]
     else
-      echoerr "No exprs or formats for " . piece
-      return ''
+      let expr = ''
     endif
 
     call add(l:bits, '%#' . hgroup . '#' . expr . '%0*')
@@ -143,7 +186,7 @@ endfunction
 function! s:build_line(active)
   let l:_ = '%{zipline#highlight()}'
   let l:side = a:active ? s:zipline.active : s:zipline.inactive
-  let l:_ .= s:make_pieces(l:side.left, '') . '%=' . s:make_pieces(l:side.right, ' | ')
+  let l:_ .= s:make_pieces(l:side.left, '') . '%=' . s:make_pieces(l:side.right, '')
   return l:_
 endfunction
 
