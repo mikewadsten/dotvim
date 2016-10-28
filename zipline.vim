@@ -1,23 +1,29 @@
-" Filename: wadline.vim
-" Author: mikewadsten
-" License: MIT License
+" Filename: zipline.vim
+" Author:   mikewadsten
+" License:  MIT License
 
-" wadline: My own statusline implementation
+" zipline: My own statusline implementation
 " Inspiration drawn from itchyny/lightline.vim
 
 " Most colors ripped from lightline solarized_dark scheme.
-hi Wadline_Blue     ctermfg=230 ctermbg=33
-hi Wadline_Red      ctermfg=230 ctermbg=124
-hi Wadline_Green    ctermfg=230 ctermbg=64
-hi Wadline_Magenta  ctermfg=230 ctermbg=125
-" TODO: more colors, more mode_colors values...
-hi Wadline_Git      ctermfg=7   ctermbg=8
+hi Zipline_Blue     ctermfg=230 ctermbg=33
+hi Zipline_Red      ctermfg=230 ctermbg=124
+hi Zipline_Green    ctermfg=230 ctermbg=64
+hi Zipline_Magenta  ctermfg=230 ctermbg=125
+hi Zipline_Git      ctermfg=7   ctermbg=8
+
+" Give mode highlight groups unique names
+hi link Zipline_Mode_Normal   Zipline_Blue
+hi link Zipline_Mode_Insert   Zipline_Green
+hi link Zipline_Mode_Visual   Zipline_Magenta
+hi link Zipline_Mode_Replace  Zipline_Red
 
 hi clear StatusLine
-hi StatusLine   term=NONE cterm=NONE ctermbg=235
-hi StatusLineNC term=NONE cterm=NONE ctermfg=8 ctermbg=233
+hi StatusLine   term=NONE cterm=NONE ctermfg=230 ctermbg=240
+hi StatusLineNC term=NONE cterm=NONE ctermfg=10  ctermbg=236
+hi ZiplineNC_Filename term=NONE cterm=NONE ctermfg=4 ctermbg=236
 
-function! wadline#mode() abort
+function! zipline#mode() abort
   let modemap = {
         \ 'n': 'normal', 'i': 'insert', 'R': 'replace', 'v': 'visual',
         \ 'V': 'V-line', "\<C-v>": 'V-block', 'c': 'command',
@@ -27,7 +33,7 @@ function! wadline#mode() abort
   return '  ' . toupper(get(modemap, l:mode, printf("MODE? %s", l:mode))) . ' '
 endfunction
 
-function! wadline#buffers() abort
+function! zipline#buffers() abort
   call bufferline#refresh_status()
   " bufferline#get_status_string() gets the content that we'd put in
   " &statusline. We're computing that here now, though, so...
@@ -37,7 +43,7 @@ function! wadline#buffers() abort
   return b.c.a
 endfunction
 
-function! wadline#fileinfo() abort
+function! zipline#fileinfo() abort
   let _ = &filetype
   if &fileformat != 'unix'
     let _ .= printf(' (%s)', toupper(&fileformat))
@@ -45,7 +51,7 @@ function! wadline#fileinfo() abort
   return _
 endfunction
 
-function! wadline#git() abort
+function! zipline#git() abort
   let _ = fugitive#head()
   if _ == ''
     " Just return empty if there's no head
@@ -60,7 +66,7 @@ function! wadline#git() abort
   return printf('  %s ', _)
 endfunction
 
-let s:wadline = {
+let s:zipline = {
       \ 'active': {
       \   'left':  ['mode', 'git', 'buffers'],
       \   'right': ['fileinfo', 'percent', 'lineinfo']
@@ -69,39 +75,44 @@ let s:wadline = {
       \   'left': ['dimfile'], 'right': []
       \ },
       \ 'exprs': {
-      \   'mode': 'wadline#mode()',
-      \   'git': 'wadline#git()',
-      \   'buffers': 'wadline#buffers()',
-      \   'fileinfo': 'wadline#fileinfo()',
+      \   'mode': 'zipline#mode()',
+      \   'git': 'zipline#git()',
+      \   'buffers': 'zipline#buffers()',
+      \   'fileinfo': 'zipline#fileinfo()',
       \ },
       \ 'formats': {
       \   'percent': '%3p%%',
       \   'lineinfo': '%3l:%-2v',
-      \   'dimfile': '%F'
+      \   'dimfile': '###### %{expand("%:p:~:.:h")}/%0*%#ZiplineNC_Filename#%t'
       \ },
       \ 'mode_colors': {
-      \   'n': 'Wadline_Blue',
-      \   'i': 'Wadline_Green',
-      \   'v': 'Wadline_Magenta',
-      \   'V': 'Wadline_Magenta',
-      \   "\<C-v>": 'Wadline_Magenta',
-      \   'R': 'Wadline_Red',
+      \   'n': 'Zipline_Mode_Normal',
+      \   'i': 'Zipline_Mode_Insert',
+      \   'v': 'Zipline_Mode_Visual',
+      \   'V': 'Zipline_Mode_Visual',
+      \   "\<C-v>": 'Zipline_Mode_Visual',
+      \   's': 'Zipline_Mode_Visual',
+      \   'S': 'Zipline_Mode_Visual',
+      \   "\<C-s>": 'Zipline_Mode_Visual',
+      \   'R': 'Zipline_Mode_Replace',
+      \   't': 'Zipline_Mode_Insert'
       \ },
       \ 'highlight': {
-      \   'git': 'Wadline_Git',
+      \   'git': 'Zipline_Git',
       \   'dimfile': 'StatusLineNC'
       \ },
       \ }
 
 let s:save_mode = ''
+let s:hgroup_activemode = 'Zipline_activemode'
 
-function! wadline#highlight() abort
-  " Relink Wadline_modeactive according to new mode
+function! zipline#highlight() abort
+  " Relink s:hgroup_activemode according to new mode
   if s:save_mode != mode()
     let s:save_mode = mode()
 
-    let hgroup = get(s:wadline.mode_colors, mode(), 'User7')
-    execute printf('hi link Wadline_modeactive %s', hgroup)
+    let hgroup = get(s:zipline.mode_colors, mode(), 'Zipline_Mode_Normal')
+    execute printf('hi link %s %s', s:hgroup_activemode, hgroup)
   endif
   return ''
 endfunction
@@ -110,15 +121,15 @@ function! s:make_pieces(pieces, sep) abort
   let l:bits = []
   for piece in a:pieces
     if piece == 'mode'
-      let hgroup = 'Wadline_modeactive'
+      let hgroup = s:hgroup_activemode
     else
-      let hgroup = get(s:wadline.highlight, piece, 'StatusLine')
+      let hgroup = get(s:zipline.highlight, piece, 'StatusLine')
     endif
 
-    if has_key(s:wadline.exprs, piece)
-      let expr = '%{' . s:wadline.exprs[piece] . '}'
-    elseif has_key(s:wadline.formats, piece)
-      let expr = s:wadline.formats[piece]
+    if has_key(s:zipline.exprs, piece)
+      let expr = '%{' . s:zipline.exprs[piece] . '}'
+    elseif has_key(s:zipline.formats, piece)
+      let expr = s:zipline.formats[piece]
     else
       echoerr "No exprs or formats for " . piece
       return ''
@@ -130,13 +141,13 @@ function! s:make_pieces(pieces, sep) abort
 endfunction
 
 function! s:build_line(active)
-  let l:_ = '%{wadline#highlight()}'
-  let l:side = a:active ? s:wadline.active : s:wadline.inactive
+  let l:_ = '%{zipline#highlight()}'
+  let l:side = a:active ? s:zipline.active : s:zipline.inactive
   let l:_ .= s:make_pieces(l:side.left, '') . '%=' . s:make_pieces(l:side.right, ' | ')
   return l:_
 endfunction
 
-function! wadline#update()
+function! zipline#update()
   let curwin = winnr()
   let lines = winnr('$') == 1 ? [s:build_line(1)] : [s:build_line(1), s:build_line(0)]
   for w in range(1, winnr('$'))
@@ -144,7 +155,7 @@ function! wadline#update()
   endfor
 endfunction
 
-augroup wadline
+augroup zipline
   autocmd!
-  autocmd WinEnter,BufWinEnter,FileType,ColorScheme,SessionLoadPost * call wadline#update()
+  autocmd WinEnter,BufWinEnter,FileType,ColorScheme,SessionLoadPost * call zipline#update()
 augroup END

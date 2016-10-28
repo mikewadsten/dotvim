@@ -108,7 +108,7 @@ set expandtab
 set shiftround
 
 set colorcolumn=80
-set noshowmode " This is what wadline is for
+set noshowmode " This is what zipline is for
 
 " Key mappings {
   " Escape is annoying to hit.
@@ -281,7 +281,7 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
   set laststatus=2
 
   " My own personal statusline 'plugin'
-  call LoadDotvimFile('wadline.vim')
+  call LoadDotvimFile('zipline.vim')
 
 " }}
 
