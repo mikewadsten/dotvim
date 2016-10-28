@@ -1,9 +1,11 @@
-if 0  " has('nvim')
-  let s:plug_path = '~/.nvim/autoload/plug.vim'
-else
-  let s:plug_path = '~/.vim/autoload/plug.vim'
+let s:runtime_dir = DotvimPath() . '/.runtime'
+let s:autoload_dir = s:runtime_dir . '/autoload'
+if !isdirectory(s:autoload_dir)
+  mkdir(s:autoload_dir, 'p')
 endif
+execute 'set runtimepath+=' . s:runtime_dir
 
+let s:plug_path = s:autoload_dir . '/plug.vim'
 if empty(glob(s:plug_path))
   echo "Looks like the first time setup for vim-plug..."
   silent exe '!curl -fLo ' . s:plug_path ' --create-dirs ' .

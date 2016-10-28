@@ -30,9 +30,3 @@ If you want to, I guess...
 # What does it look like?
 
 ![dotvim screenshot](dotvim.png)
-
-# TODOs
-
-  * This setup is almost standalone (see [Features](#features)), but it still
-    downloads `vim-plug` into `~/.vim/autoload`. Consider adding a subdirectory
-    (`runtime` perhaps) to clone that into, and add that to `runtimepath`.
