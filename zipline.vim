@@ -29,7 +29,7 @@ hi ZiplineNC_Filename term=NONE cterm=NONE ctermfg=4 ctermbg=235
 hi Zipline_StlOrangeText ctermfg=166 ctermbg=235
 
 function! zipline#mode() abort
-  if getwinvar(winnr(), '&filetype') == 'help'
+  if s:ishelp()
     return ''  " Addressed in zipline#helpmode()
   endif
   let modemap = {
@@ -41,8 +41,12 @@ function! zipline#mode() abort
   return '  ' . toupper(get(modemap, l:mode, printf("MODE? %s", l:mode))) . ' '
 endfunction
 
+function! s:ishelp()
+  return &filetype == "help"
+endfunction
+
 function! zipline#helpmode() abort
-  if getwinvar(winnr(), '&filetype') == 'help'
+  if s:ishelp()
     return '   HELP  '
   else
     return ''
@@ -50,7 +54,7 @@ function! zipline#helpmode() abort
 endfunction
 
 function! zipline#buffers() abort
-  if getwinvar(winnr(), '&filetype') == 'help'
+  if s:ishelp()
     return expand('%')
   endif
   call bufferline#refresh_status()
@@ -63,7 +67,7 @@ function! zipline#buffers() abort
 endfunction
 
 function! zipline#inactive_dir() abort
-  if &filetype == "help"
+  if s:ishelp()
     return ''
   else
     return expand('%:p:~:.:h') . '/'
@@ -155,7 +159,7 @@ function! zipline#highlight() abort
     let hgroup = get(s:zipline.mode_colors, mode(), 'Zipline_Mode_Normal')
     execute printf('hi link %s %s', s:hgroup_activemode, hgroup)
 
-    let hgroup = &ft=="help" ? "Zipline_StlOrangeText" : "StatusLine"
+    let hgroup = s:ishelp() ? "Zipline_StlOrangeText" : "StatusLine"
     execute printf('hi link %s %s', s:hgroup_activebuf, hgroup)
   endif
   return ''
