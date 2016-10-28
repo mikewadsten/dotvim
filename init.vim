@@ -295,6 +295,8 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
 
   autocmd! Filetype vim setl ts=2 sw=2 sts=2
 
+  autocmd! Filetype help setl colorcolumn=0
+
 " }
 
 " TODO total hack
