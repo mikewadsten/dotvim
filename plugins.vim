@@ -39,6 +39,8 @@ endif
   " I will be integrating bufferline into my own statusline.
   let g:bufferline_echo = 0
 
+  let g:commentary_map_backslash = 0
+
 " }}
 
 " Use DotvimPath() for full standalone installation. :)
@@ -52,7 +54,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-unimpaired'
-let g:commentary_map_backslash = 0
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-scriptease'
 
@@ -81,6 +82,8 @@ Plug 'bling/vim-bufferline'
 
 " TODO: vim-over?
 call plug#end()
+
+call LoadDotvimFile('cscope.vim')
 
 " Total hack
 augroup mikeInitReloadPlugins
