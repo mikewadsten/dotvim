@@ -9,10 +9,14 @@
       return ''
     endif
 
+    " echo "DEBUG:" join(a:000)
+
     " Pull arguments out into variables.
     let file = fnamemodify(expand(a:1), ':p')
-    let prepath = expand(get(a:000, 2, fnamemodify(file, ':h')))
-    let flags = get(a:000, 3, '-ia')
+    let prepath = expand(get(a:000, 1, fnamemodify(file, ':h')))
+    let flags = get(a:000, 2, '-ia')
+
+    " echo "DEBUG2:" join([file, prepath, flags])
 
     " Validate arguments.
     if !filereadable(file)
@@ -38,6 +42,7 @@
       let save_csprg = &cscopeprg
       set nocscopeverbose cscopeprg=cscope
       try
+        echo printf("cscope add %s %s %s", file, prepath, flags)
         execute printf("cscope add %s %s %s", file, prepath, flags)
         echo "cscope database opened:" file
       finally
@@ -58,8 +63,8 @@
 
     " Pull arguments out into variables.
     let file = fnamemodify(expand(a:1), ':p')
-    let prepath = expand(get(a:000, 2, fnamemodify(file, ':h')))
-    let flags = get(a:000, 3, '-ia')
+    let prepath = expand(get(a:000, 1, fnamemodify(file, ':h')))
+    let flags = get(a:000, 2, '-ia')
 
     " Validate arguments.
     if !filereadable(file)
@@ -97,6 +102,26 @@
         let &csverb = save_csverb
         let &cscopeprg = save_csprg
       endtry
+    endif
+  endfunction
+
+  function! cscope#detect()
+    if !exists('b:git_dir')
+      return
+    endif
+
+    " TODO: Deal with git modules (.git/modules/foo)
+
+    let silent = get(g:, 'cscope_detect_silent', 1) ? 'silent! ' : ''
+
+    let root = fnamemodify(b:git_dir, ':h')
+    if filereadable(root . '/cscope.out')
+      execute printf("%sCscopeAdd %s/cscope.out %s", silent, root, root)
+    elseif filereadable(b:git_dir . '/cscope')  " git hooks based
+      execute printf("%sCscopeAdd %s/cscope %s", silent, b:git_dir, root)
+    endif
+    if filereadable(root . '/GTAGS')
+      execute printf("%sGtagsAdd %s/GTAGS %s", silent, root, root)
     endif
   endfunction
 
@@ -145,6 +170,13 @@
     endif
   endfunction
 
+  function! s:fugitive_boot()
+    augroup cscopeDetect
+      autocmd!
+      autocmd User Fugitive call cscope#detect()
+    augroup END
+  endfunction
+
 " }}
 
 " TODO: Intelligent completion based on which arg you're doing?
@@ -154,6 +186,11 @@ if executable('cscope')
 endif
 if executable('gtags-cscope')
   command! -nargs=* -complete=file GtagsAdd  call s:add_gtags(<f-args>)
+endif
+
+" FIXME hack to work around plugin load order
+if get(g:, 'cscope_has_fugitive', 1)
+  autocmd! User FugitiveBoot call s:fugitive_boot()
 endif
 
 " Key bindings {{
@@ -176,3 +213,5 @@ endif
   set cscopetag
 
 " }}
+
+" TODO: Make a command to generate cscope/gtags from b:git_dir?
