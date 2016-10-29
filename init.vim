@@ -42,7 +42,7 @@ set scrolloff=1 scrolljump=1
 set sidescrolloff=5
 set display=lastline
 
-set splitright splitbelow
+set nosplitright splitbelow
 
 if v:version > 703 || v:version == 703 && has("patch541")
   set formatoptions+=j  " Delete comment character when joining commented lines
