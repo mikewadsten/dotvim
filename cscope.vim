@@ -167,7 +167,8 @@ endif
 
   " Go right to a query operation
   for c in ['s', 'g', 't', 'c', 'd', 'e', 'f', 'i']
-    execute printf("nnoremap <silent> <C-@>%s :call <SID>do_cs_find('%s')<CR>", c, c)
+    let nr = char2nr(c)
+    execute printf("nnoremap <silent> <C-@>%c :call <SID>do_cs_find('%c')<CR>", nr, nr)
   endfor
 
   set nocscopeverbose
