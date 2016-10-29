@@ -42,7 +42,6 @@
       let save_csprg = &cscopeprg
       set nocscopeverbose cscopeprg=cscope
       try
-        echo printf("cscope add %s %s %s", file, prepath, flags)
         execute printf("cscope add %s %s %s", file, prepath, flags)
         echo "cscope database opened:" file
       finally
