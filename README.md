@@ -1,6 +1,8 @@
 dotvim
 ======
 
+[![Build Status](https://travis-ci.org/mikewadsten/dotvim.svg?branch=master)](https://travis-ci.org/mikewadsten/dotvim)
+
 A relatively barebones Vim setup.
 
 # Features
