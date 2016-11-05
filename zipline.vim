@@ -198,7 +198,7 @@ function! zipline#update()
   let curwin = winnr()
   let lines = winnr('$') == 1 ? [s:build_line(1)] : [s:build_line(1), s:build_line(0)]
   for w in range(1, winnr('$'))
-    call setwinvar(w, '&statusline', lines[w != curwin])
+    call setwinvar(w, '&statusline', lines[w == curwin ? 0 : 1])
   endfor
 endfunction
 
