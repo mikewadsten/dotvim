@@ -10,7 +10,7 @@ if empty(glob(s:plug_path))
   echo "Looks like the first time setup for vim-plug..."
   silent exe '!curl -fLo ' . s:plug_path ' --create-dirs ' .
         \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall | source $MYVIMRC
+  autocmd VimEnter * PlugInstall | execute "source " . DotvimPath() . '/init.vim'
 endif
 
 " Settings {{
