@@ -96,13 +96,13 @@ set wildmode=list:longest,full
 set whichwrap=b,s,h,l,<,>,[,]
 
 " Default indentation settings. Wow, so PEP-8.
-if 1  " TODO: Do this based on filetype...
+" if 1  " TODO: Do this based on filetype...
   setl tabstop=4
   setl shiftwidth=4
   setl softtabstop=4
-else
-  set tabstop=2 shiftwidth=2 softtabstop=2
-endif
+" else
+"   set tabstop=2 shiftwidth=2 softtabstop=2
+" endif
 
 set expandtab
 set shiftround
@@ -135,7 +135,7 @@ set noshowmode " This is what zipline is for
     command! BP bp
   endif
 
-  let mapleader = ','
+  let g:mapleader = ','
 
   nmap <silent> <Leader>/ :set invhlsearch<CR>
   " I seem to have a habit of hitting q and then leader...
@@ -206,13 +206,13 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
     execute printf('inoremap <expr> %s pumvisible() ? "%s" : "%s"', a:key, a:mapping, a:key)
   endfunction
 
-  if 0
-    " Doesn't work...
-    call s:CompleteMap('<Esc>',   '<C-e>')
-    call s:CompleteMap('<CR>',    '<C-y>')
-    call s:CompleteMap('<Down>',  '<C-n>')
-    call s:CompleteMap('<Up>',    '<C-p>')
-  endif
+  " if 0
+  "   " Doesn't work...
+  "   call s:CompleteMap('<Esc>',   '<C-e>')
+  "   call s:CompleteMap('<CR>',    '<C-y>')
+  "   call s:CompleteMap('<Down>',  '<C-n>')
+  "   call s:CompleteMap('<Up>',    '<C-p>')
+  " endif
 " }
 
 " TODO: neocomplete
@@ -364,10 +364,6 @@ function! s:grab_code_here()
   echom l:content
   return l:content
 endfunction
-
-let a = 1 + 2
-      \ + 3 *
-      \ 4
 
 " xnoremap <silent> gz :<C-U>call <SID>get_visual_selection()<CR>
 

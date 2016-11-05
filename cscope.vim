@@ -24,7 +24,7 @@
       return ''
     elseif prepath[0] == '-'
       " Second argument is flags.
-      let prepath = fnamemodify(file ':p:h')
+      let prepath = fnamemodify(file, ':p:h')
       let flags = ''
     elseif !isdirectory(prepath)
       echo "Not a directory:" prepath
@@ -71,7 +71,7 @@
       return ''
     elseif prepath[0] == '-'
       " Second argument is flags.
-      let prepath = fnamemodify(file ':p:h')
+      let prepath = fnamemodify(file, ':p:h')
       let flags = ''
     elseif !isdirectory(prepath)
       echo "Not a directory:" prepath
@@ -202,9 +202,11 @@ endif
   nmap <C-@><C-?>     <Plug>cscopePrompt
 
   " Go right to a query operation
-  for c in ['s', 'g', 't', 'c', 'd', 'e', 'f', 'i']
-    let nr = char2nr(c)
-    execute printf("nnoremap <silent> <C-@>%c :call <SID>do_cs_find('%c')<CR>", nr, nr)
+  for s:c in ['s', 'g', 't', 'c', 'd', 'e', 'f', 'i']
+    let s:nr = char2nr(s:c)
+    execute printf("nnoremap <silent> <C-@>%c :call <SID>do_cs_find('%c')<CR>", s:nr, s:nr)
+    unlet s:c
+    unlet s:nr
   endfor
 
   set nocscopeverbose

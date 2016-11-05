@@ -60,10 +60,10 @@ function! zipline#buffers() abort
   call bufferline#refresh_status()
   " bufferline#get_status_string() gets the content that we'd put in
   " &statusline. We're computing that here now, though, so...
-  let b = g:bufferline_status_info.before
-  let c = g:bufferline_status_info.current
-  let a = g:bufferline_status_info.after
-  return b.c.a
+  let l:before = g:bufferline_status_info.before
+  let l:current = g:bufferline_status_info.current
+  let l:after = g:bufferline_status_info.after
+  return l:before . l:current . l:after
 endfunction
 
 function! zipline#inactive_dir() abort

@@ -1,7 +1,7 @@
 let s:runtime_dir = DotvimPath() . '/.runtime'
 let s:autoload_dir = s:runtime_dir . '/autoload'
 if !isdirectory(s:autoload_dir)
-  mkdir(s:autoload_dir, 'p')
+  call mkdir(s:autoload_dir, 'p')
 endif
 execute 'set runtimepath+=' . s:runtime_dir
 
@@ -79,6 +79,10 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'AndrewRadev/switch.vim'
 
 Plug 'bling/vim-bufferline'
+
+" Lint
+Plug 'ynkdir/vim-vimlparser'
+Plug 'syngan/vim-vimlint'
 
 " TODO: vim-over?
 call plug#end()
