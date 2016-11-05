@@ -17,5 +17,6 @@ cache:
     - $HOME/vim-7.4
 
 script:
+  - (echo ':PlugInstall | :qa' | vim -u init.vim -e -s)
   - /tmp/themis/bin/themis --reporter spec
-  - PATH=$HOME/vim-7.4/bin/:$PATH /tmp/themis/bin/themis --reporter spec
+  - PATH=$HOME/vim-7.4/bin/:$PATH THEMIS_ARGS='-u init.vim -e -s' /tmp/themis/bin/themis --reporter spec
