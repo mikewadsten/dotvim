@@ -84,6 +84,8 @@ Plug 'bling/vim-bufferline'
 Plug 'ynkdir/vim-vimlparser'
 Plug 'syngan/vim-vimlint'
 
+Plug 'thinca/vim-themis'
+
 " TODO: vim-over?
 call plug#end()
 
