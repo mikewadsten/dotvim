@@ -104,20 +104,31 @@
     endif
   endfunction
 
-  function! cscope#detect()
-    if !exists('b:git_dir')
-      return
+  function! cscope#detect(...)
+    " One optional argument, to override b:git_dir check
+    if a:0 > 0
+      if !isdirectory(a:1)
+        echo "Not a directory:" a:1
+        return
+      else
+        let root = a:1
+      endif
+    else
+      if !exists('b:git_dir')
+        return
+      else
+        let root = fnamemodify(b:git_dir, ':h')
+      endif
     endif
 
     " TODO: Deal with git modules (.git/modules/foo)
 
     let silent = get(g:, 'cscope_detect_silent', 1) ? 'silent! ' : ''
 
-    let root = fnamemodify(b:git_dir, ':h')
     if filereadable(root . '/cscope.out')
       execute printf("%sCscopeAdd %s/cscope.out %s", silent, root, root)
-    elseif filereadable(b:git_dir . '/cscope')  " git hooks based
-      execute printf("%sCscopeAdd %s/cscope %s", silent, b:git_dir, root)
+    elseif filereadable(root . '/.git/cscope')  " git hooks based
+      execute printf("%sCscopeAdd %s/.git/cscope %s", silent, root, root)
     endif
     if filereadable(root . '/GTAGS')
       execute printf("%sGtagsAdd %s/GTAGS %s", silent, root, root)
