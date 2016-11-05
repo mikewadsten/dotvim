@@ -2,9 +2,11 @@ language: generic
 
 sudo: false
 
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y cscope global
+addons:
+  apt:
+    packages:
+      - cscope
+      - global
 
 install:
   - git clone --depth=1 https://github.com/thinca/vim-themis /tmp/themis
