@@ -1,0 +1,93 @@
+" Assumes cwd is dotvim/ but that should be good enough
+let s:cwd = getcwd() . '/test'
+let s:assert = themis#helper('assert')
+
+function! s:check_tag()
+  call s:assert.not_match(bufname('%'), 'foo.c$')
+  tag myfunc
+  call s:assert.match(bufname('%'), 'foo.c$')
+
+  bdelete!
+endfunction
+
+describe cscope
+  before all
+    cscope kill -1
+    execute "chdir " . s:cwd
+    call system("cscope -Rbq -P" . s:cwd)
+    source ../cscope.vim
+    chdir -
+  end
+
+  after all
+    call system(printf("rm -f %s/cscope.*out", s:cwd))
+  end
+
+  before each
+    cscope kill -1
+    chdir /tmp
+    call s:assert.equals(cscope_connection(), 0, "Saw cscope connection after chdir /tmp")
+  end
+
+  describe cscope#detect()
+    it works with directory argument
+      let b:git_dir = '/tmp'
+      call cscope#detect(s:cwd)
+      call s:assert.equals(cscope_connection(), 1, "Didn't see cscope connection after detect")
+      call s:assert.equals(cscope_connection(2, s:cwd . '/cscope.out'), 1,
+            \              "Didn't find cscope.out in given dir!")
+
+      call s:check_tag()
+    end
+
+    it uses b:git_dir when called without argument
+      let b:git_dir = s:cwd . '/.git'
+      call cscope#detect()
+      call s:assert.equals(cscope_connection(), 1,
+            \              "Did not see cscope connection after detect")
+      call s:assert.equals(cscope_connection(2, s:cwd . '/cscope.out'), 1,
+            \              "Didn't find cscope.out in given dir!")
+
+      call s:check_tag()
+    end
+  end
+
+  describe CscopeAdd command
+    it uses file directory as prepath if not given
+      execute "CscopeAdd " . s:cwd . "/cscope.out"
+
+      call s:assert.equals(cscope_connection(), 1)
+      " Check the file and prepath are correct
+      call s:assert.equals(cscope_connection(4, s:cwd . '/cscope.out', s:cwd), 1)
+
+      call s:check_tag()
+    end
+
+    it uses prepath argument if given
+      execute "CscopeAdd " . s:cwd . "/cscope.out /tmp"
+
+      call s:assert.equals(cscope_connection(), 1)
+      " Check the file and prepath are correct
+      call s:assert.equals(cscope_connection(4, s:cwd . '/cscope.out', '/tmp'), 1)
+    end
+
+    it accepts flags argument if given
+      execute "CscopeAdd " . s:cwd . "/cscope.out /var -C"
+
+      call s:assert.equals(cscope_connection(), 1)
+      " Check the file and prepath are correct. Can't inspect flags though :(
+      call s:assert.equals(cscope_connection(4, s:cwd . '/cscope.out', '/var'), 1)
+    end
+
+    it treats prepath as flags if it starts with -
+      " prepath should be file's directory, as in a test above.
+      execute "CscopeAdd " . s:cwd . "/cscope.out -C"
+
+      call s:assert.equals(cscope_connection(), 1)
+      " Check the file and prepath are correct. Can't inspect flags though :(
+      call s:assert.equals(cscope_connection(4, s:cwd . '/cscope.out', s:cwd), 1)
+
+      call s:check_tag()
+    end
+  end
+end
