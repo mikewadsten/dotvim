@@ -131,13 +131,12 @@ describe cscope
     end
 
     it treats prepath as flags if it starts with -
-      execute "GtagsAdd " . s:cwd . "/GTAGS -C"
+      execute "GtagsAdd " . s:cwd . "/GTAGS -iaC"
 
       call s:assert.equals(cscope_connection(), 1, "No cscope connection after GtagsAdd")
       call s:assert.equals(cscope_connection(4, s:cwd . "/GTAGS", s:cwd), 1, "No matching cscope connection after GtagsAdd")
 
-      " Hmm, this seems to fail. Probably the flags.
-      " call s:check_tag()
+      call s:check_tag()
     end
   end
 end

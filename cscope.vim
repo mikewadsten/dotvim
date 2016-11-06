@@ -24,8 +24,8 @@
       return ''
     elseif prepath[0] == '-'
       " Second argument is flags.
+      let flags = prepath
       let prepath = fnamemodify(file, ':p:h')
-      let flags = ''
     elseif !isdirectory(prepath)
       echo "Not a directory:" prepath
       return ''
@@ -71,8 +71,8 @@
       return ''
     elseif prepath[0] == '-'
       " Second argument is flags.
+      let flags = prepath
       let prepath = fnamemodify(file, ':p:h')
-      let flags = ''
     elseif !isdirectory(prepath)
       echo "Not a directory:" prepath
       return ''
