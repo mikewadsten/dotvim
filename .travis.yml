@@ -9,9 +9,8 @@ addons:
 
 install:
   - git clone --depth=1 https://github.com/thinca/vim-themis /tmp/themis
-  - git clone https://github.com/vim/vim $HOME/vim
-  - (if ! test -d $HOME/vim-7.4/bin; then cd $HOME/vim && git checkout . && git checkout v7.4 && ./configure --prefix=$HOME/vim-7.4 --enable-cscope && make && make install; fi)
-  - (wget -q https://tamacom.com/global/global-6.5.5.tar.gz -O $HOME/global-6.5.5.tar.gz && mkdir $HOME/global-6.5.5-src && cd $HOME && tar xvzf global-6.5.5.tar.gz -C $HOME/global-6.5.5-src)
+  - (if ! test -d $HOME/vim-7.4/bin; then git clone https://github.com/vim/vim $HOME/vim && cd $HOME/vim && git checkout . && git checkout v7.4 && ./configure --prefix=$HOME/vim-7.4 --enable-cscope && make && make install; fi)
+  - (if ! test -d $HOME/global/bin; then wget -q https://tamacom.com/global/global-6.5.5.tar.gz -O $HOME/global-6.5.5.tar.gz && mkdir $HOME/global-6.5.5-src && cd $HOME && tar xvzf global-6.5.5.tar.gz -C $HOME/global-6.5.5-src; fi)
   - (if ! test -d $HOME/global/bin; then cd $HOME/global-6.5.5-src/global-6.5.5 && ./configure --prefix=$HOME/global && make && make install; fi)
 
 cache:
