@@ -126,12 +126,12 @@
     let silent = get(g:, 'cscope_detect_silent', 1) ? 'silent! ' : ''
 
     if filereadable(root . '/cscope.out')
-      execute printf("%sCscopeAdd %s/cscope.out %s", silent, root, root)
+      execute printf("%sCscopeAdd %s/cscope.out", silent, root)
     elseif filereadable(root . '/.git/cscope')  " git hooks based
       execute printf("%sCscopeAdd %s/.git/cscope %s", silent, root, root)
     endif
     if filereadable(root . '/GTAGS')
-      execute printf("%sGtagsAdd %s/GTAGS %s", silent, root, root)
+      execute printf("%sGtagsAdd %s/GTAGS", silent, root)
     endif
   endfunction
 
