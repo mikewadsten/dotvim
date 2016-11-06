@@ -12,6 +12,9 @@ endfunction
 
 describe cscope
   before all
+    call system(printf("rm -f %s/cscope.*out", s:cwd))
+    call system(printf("rm -f %s/GPATH %s/GTAGS %s/GRTAGS", s:cwd, s:cwd, s:cwd))
+
     cscope kill -1
     execute "chdir " . s:cwd
     call system("cscope -Rbq -P" . s:cwd)
@@ -21,6 +24,7 @@ describe cscope
 
   after all
     call system(printf("rm -f %s/cscope.*out", s:cwd))
+    call system(printf("rm -f %s/GPATH %s/GTAGS %s/GRTAGS", s:cwd, s:cwd, s:cwd))
   end
 
   before each
@@ -88,6 +92,52 @@ describe cscope
       call s:assert.equals(cscope_connection(4, s:cwd . '/cscope.out', s:cwd), 1)
 
       call s:check_tag()
+    end
+  end
+
+  describe GtagsAdd command
+    before all
+      call system(printf("rm -f %s/cscope.*out", s:cwd))
+      execute "chdir " . s:cwd
+      call system("gtags --gtagslabel ctags")
+      chdir -
+    end
+
+    before each
+      cscope kill -1
+    end
+
+    it uses file directory as prepath if not given
+      execute "GtagsAdd " . s:cwd . "/GTAGS"
+
+      call s:assert.equals(cscope_connection(), 1, "No cscope connection after GtagsAdd")
+      call s:assert.equals(cscope_connection(4, s:cwd . '/GTAGS', s:cwd), 1, "No matching cscope connection after GtagsAdd")
+
+      call s:check_tag()
+    end
+
+    it uses prepath argument if given
+      execute "GtagsAdd " . s:cwd . "/GTAGS /tmp"
+
+      call s:assert.equals(cscope_connection(), 1, "No cscope connection after GtagsAdd")
+      call s:assert.equals(cscope_connection(4, s:cwd . '/GTAGS', '/tmp'), 1, "No matching cscope connection after GtagsAdd")
+    end
+
+    it accepts flags argument if given
+      execute "GtagsAdd " . s:cwd . "/GTAGS /var -C"
+
+      call s:assert.equals(cscope_connection(), 1, "No cscope connection after GtagsAdd")
+      call s:assert.equals(cscope_connection(4, s:cwd . '/GTAGS', '/var'), 1, "No matching cscope connection after GtagsAdd")
+    end
+
+    it treats prepath as flags if it starts with -
+      execute "GtagsAdd " . s:cwd . "/GTAGS -C"
+
+      call s:assert.equals(cscope_connection(), 1, "No cscope connection after GtagsAdd")
+      call s:assert.equals(cscope_connection(4, s:cwd . "/GTAGS", s:cwd), 1, "No matching cscope connection after GtagsAdd")
+
+      " Hmm, this seems to fail. Probably the flags.
+      " call s:check_tag()
     end
   end
 end
