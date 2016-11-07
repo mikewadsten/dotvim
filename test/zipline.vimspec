@@ -20,7 +20,7 @@ describe zipline
       let b:zipline_utest = {'mode': 'n'}
     end
 
-    it returns mmode name in uppercase
+    it returns mode name in uppercase
       " NOTE: I'm not bothering to test every case.
       let mapping = {
             \ 'n': 'NORMAL',
