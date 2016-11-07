@@ -1,0 +1,151 @@
+let s:cwd = getcwd() . '/test'
+let s:assert = themis#helper('assert')
+
+function! s:hi(name)
+  redir => hi
+    silent! exec 'hi' a:name
+  redir END
+  return substitute(join(split(hi, '\n'), ''), ' \+', ' ', 'g')
+endfunction
+
+describe zipline
+  before all
+    execute "chdir " . s:cwd . "/.."
+    source zipline.vim
+    chdir -
+  end
+
+  describe zipline#mode()
+    before all
+      let b:zipline_utest = {'mode': 'n'}
+    end
+
+    it returns mmode name in uppercase
+      " NOTE: I'm not bothering to test every case.
+      let mapping = {
+            \ 'n': 'NORMAL',
+            \ 'i': 'INSERT',
+            \ 'R': 'REPLACE',
+            \ 'v': 'VISUAL',
+            \ 'V': 'V-LINE',
+            \ 's': 'SELECT',
+            \ 'S': 'S-LINE',
+            \ 't': 'TERMINAL'
+            \ }
+
+      for [m, text] in items(mapping)
+        let b:zipline_utest.mode = m
+        call s:assert.match(zipline#mode(), text)
+      endfor
+    end
+  end
+
+  describe zipline#helpmode()
+    it says HELP if this is a help buffer
+      set filetype=help
+      call s:assert.match(zipline#helpmode(), 'HELP')
+    end
+
+    it is empty if this is not a help buffer
+      set filetype=
+      call s:assert.equals(zipline#helpmode(), '')
+    end
+  end
+
+  describe zipline#buffers()
+    after each
+      bufdo bdelete
+    end
+
+    it returns filename if this is a help buffer
+      execute "edit " . s:cwd . '/src/foo.c'
+      set filetype=help
+      call s:assert.equals(zipline#buffers(), 'foo.c')
+    end
+
+    it returns bufferline output if not a help buffer
+      edit 1
+      edit 2
+      edit 3
+      edit 4
+      set filetype=
+
+      call zipline#update()
+      let val = zipline#buffers()
+
+      " Get expected value.
+      let b = g:bufferline_status_info.before
+      let c = g:bufferline_status_info.current
+      let a = g:bufferline_status_info.after
+      let expected = b . c . a
+
+      call s:assert.equals(val, expected)
+    end
+  end
+
+  describe zipline#git()
+    before each
+      let b:zipline_utest = {'fugitive_head': ''}
+    end
+
+    it returns empty if there's no git head
+      let b:zipline_utest.fugitive_head = ''
+      call s:assert.equals(zipline#git(), '')
+    end
+
+    it truncates head if it's too long
+      let long = 'double double animal style'
+      let b:zipline_utest.fugitive_head = long
+
+      let truncated = printf('%.18s', long)
+      call s:assert.match(zipline#git(), '  ' . truncated . '\.\.\. ')
+    end
+
+    it doesn't truncate head if it's short enough
+      let short = 'foo'
+      let b:zipline_utest.fugitive_head = short
+
+      call s:assert.equals(zipline#git(), printf('  %s ', short))
+    end
+  end
+
+  describe zipline#highlight()
+    before each
+      " #highlight only does something if mode or &ft changes. It's easy to
+      " change ft.
+      set filetype=something
+      call zipline#highlight()
+      set filetype=
+      call zipline#highlight()
+
+      let b:zipline_utest = {'mode': 'n'}
+
+      call s:assert.match(s:hi('Zipline_activemode'), 'links to Zipline_Mode_Normal', "bad group linkage in `before each`")
+    end
+
+    it relinks active mode highlight group based on current mode
+      for [m, group] in items(g:zipline.mode_colors)
+        let b:zipline_utest.mode = m
+        " Trigger change on #highlight call
+        set filetype=something
+        call zipline#highlight()
+
+        set filetype=
+        call zipline#highlight()
+        call s:assert.match(s:hi('Zipline_activemode'), 'links to ' . group, "Wrong group linkage for mode = " . m)
+      endfor
+    end
+
+    it highlights buffers in orange if this is a help buffer
+      set filetype=help
+      call zipline#highlight()
+      call s:assert.match(s:hi('Zipline_activebuffers'), 'links to Zipline_StlOrangeText')
+    end
+
+    it highlights buffers as StatusLine if this is not a help buffer
+      set filetype=
+      call zipline#highlight()
+      call s:assert.match(s:hi('Zipline_activebuffers'), 'links to StatusLine')
+    end
+  end
+end

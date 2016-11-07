@@ -38,6 +38,10 @@ function! zipline#mode() abort
         \ 's': 'select', 'S': 's-line', "\<C-s>": 's-block',
         \ 't': 'terminal' }
   let l:mode = mode()
+  " Override for unit testing...
+  if exists('b:zipline_utest')
+    let l:mode = get(b:zipline_utest, 'mode', 'n')
+  endif
   return '  ' . toupper(get(modemap, l:mode, printf("MODE? %s", l:mode))) . ' '
 endfunction
 
@@ -55,7 +59,7 @@ endfunction
 
 function! zipline#buffers() abort
   if s:ishelp()
-    return expand('%')
+    return expand('%:t')
   endif
   call bufferline#refresh_status()
   " bufferline#get_status_string() gets the content that we'd put in
@@ -83,7 +87,11 @@ function! zipline#fileinfo() abort
 endfunction
 
 function! zipline#git() abort
-  let _ = fugitive#head()
+  if exists('b:zipline_utest')
+    let _ = get(b:zipline_utest, 'fugitive_head', '')
+  else
+    let _ = fugitive#head()
+  endif
   if _ == ''
     " Just return empty if there's no head
     return ''
@@ -147,6 +155,8 @@ let s:zipline = {
 let s:save_mode = ''
 let s:save_ft = ''
 
+let g:zipline = s:zipline
+
 execute 'hi link ' . s:hgroup_activemode . ' Zipline_Mode_Normal'
 execute 'hi link ' . s:hgroup_activebuf . ' StatusLine'
 
@@ -156,7 +166,12 @@ function! zipline#highlight() abort
     let s:save_mode = mode()
     let s:save_ft = &ft
 
-    let hgroup = get(s:zipline.mode_colors, mode(), 'Zipline_Mode_Normal')
+    if exists('b:zipline_utest')
+      let curmode = get(b:zipline_utest, 'mode', 'n')
+    else
+      let curmode = mode()
+    endif
+    let hgroup = get(s:zipline.mode_colors, curmode, 'Zipline_Mode_Normal')
     execute printf('hi link %s %s', s:hgroup_activemode, hgroup)
 
     let hgroup = s:ishelp() ? "Zipline_StlOrangeText" : "StatusLine"
