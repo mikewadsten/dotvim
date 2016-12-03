@@ -176,7 +176,7 @@ set noshowmode " This is what zipline is for
 
 " Switch to current file directory automatically
 autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
-      \ execute 'lcd ' . fnamemodify(resolve(expand('%:p')), ':h') |
+      \ execute 'lcd ' . escape(fnamemodify(resolve(expand('%:p')), ':h'), ' ') |
       \ endif
 
 " TODO: cscope {
