@@ -36,7 +36,8 @@ describe cscope
   describe cscope#detect()
     it works with directory argument
       let b:git_dir = '/tmp'
-      call cscope#detect(s:cwd)
+      let retval = cscope#detect(s:cwd)
+      call s:assert.equals(retval, 1, "Bad entry state")
       call s:assert.equals(cscope_connection(), 1, "Didn't see cscope connection after detect")
       call s:assert.equals(cscope_connection(2, s:cwd . '/cscope.out'), 1,
             \              "Didn't find cscope.out in given dir!")
@@ -46,7 +47,8 @@ describe cscope
 
     it uses b:git_dir when called without argument
       let b:git_dir = s:cwd . '/.git'
-      call cscope#detect()
+      let retval = cscope#detect()
+      call s:assert.equals(retval, 1, "Bad entry state")
       call s:assert.equals(cscope_connection(), 1,
             \              "Did not see cscope connection after detect")
       call s:assert.equals(cscope_connection(2, s:cwd . '/cscope.out'), 1,

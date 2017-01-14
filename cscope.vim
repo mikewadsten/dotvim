@@ -109,13 +109,14 @@
     if a:0 > 0
       if !isdirectory(a:1)
         echo "Not a directory:" a:1
-        return
+        return 0
       else
         let root = a:1
       endif
     else
+      " No arguments passed
       if !exists('b:git_dir')
-        return
+        return 0
       else
         let root = fnamemodify(b:git_dir, ':h')
       endif
@@ -133,6 +134,8 @@
     if filereadable(root . '/GTAGS')
       execute printf("%sGtagsAdd %s/GTAGS", silent, root)
     endif
+
+    return 1
   endfunction
 
   function! s:do_cs_find(key)
