@@ -1,0 +1,11 @@
+let s:cwd = getcwd() . '/test'
+let s:assert = themis#helper('assert')
+
+describe init.vim
+  describe auto-lcd
+    it is okay with spaces in the file path
+      execute printf("edit %s/src/path\\ space/blah.c", s:cwd)
+      call s:assert.equals(getcwd(), printf("%s/src/path\ space", s:cwd))
+    end
+  end
+end
