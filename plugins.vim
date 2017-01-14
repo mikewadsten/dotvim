@@ -85,6 +85,7 @@ Plug 'ynkdir/vim-vimlparser'
 Plug 'syngan/vim-vimlint'
 
 Plug 'thinca/vim-themis'
+Plug 'rust-lang/rust.vim'
 
 " TODO: vim-over?
 call plug#end()
