@@ -122,7 +122,10 @@
       endif
     endif
 
-    " TODO: Deal with git modules (.git/modules/foo)
+    if a:0 == 0 && match(b:git_dir, '.git/modules/') != -1
+      let cmd = printf('git --git-dir=%s rev-parse --show-toplevel', b:git_dir)
+      let root = substitute(system(cmd), '\n', '', '')
+    endif
 
     let silent = get(g:, 'cscope_detect_silent', 1) ? 'silent! ' : ''
 
