@@ -110,8 +110,11 @@
     " If the git repository is a submodule, use rev-parse to get the working
     " directory.
     if match(a:git_dir, '.git/modules') != -1
-      let cmd = printf('git --git-dir=%s rev-parse --show-toplevel', escape(a:git_dir, ' '))
+      let cmd = printf('git --git-dir=%s rev-parse --show-toplevel', a:git_dir)
       let answer = substitute(system(cmd), '\n', '', '')
+    else
+      " Not a submodule -- just strip the .git off the end
+      let answer = fnamemodify(a:git_dir, ':h')
     endif
 
     return answer
