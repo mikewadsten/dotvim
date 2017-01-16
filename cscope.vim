@@ -254,11 +254,11 @@
 " Like this? http://vi.stackexchange.com/a/6696
 if executable('cscope')
   command! -nargs=* -complete=file CscopeAdd call s:add_cscope(<f-args>)
-  command! -nargs=? -complete=dir CscopeGen call s:generate_cscope(<f-args>)
+  command! -nargs=? -complete=dir CscopeGen call s:generate_cscope(<f-args>) | call cscope#detect(<f-args>)
 endif
 if executable('gtags-cscope')
   command! -nargs=* -complete=file GtagsAdd  call s:add_gtags(<f-args>)
-  command! -nargs=? -complete=dir GtagsGen call s:generate_gtags(<f-args>)
+  command! -nargs=? -complete=dir GtagsGen call s:generate_gtags(<f-args>) | call cscope#detect(<f-args>)
 endif
 
 " FIXME hack to work around plugin load order
