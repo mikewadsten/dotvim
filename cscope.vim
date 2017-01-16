@@ -219,11 +219,15 @@
       return
     endif
 
+    echo "Working..."
+
     let savecwd = getcwd()
     execute printf("chdir %s", escape(directory, ' '))
     let cmd = "cscope -Rbq -f cscope.out 2>&1 >/dev/null"
     echo system(cmd)
     execute printf("chdir %s", escape(savecwd, ' '))
+
+    echo "cscope file generation complete"
   endfunction
 
   function! s:generate_gtags(...) abort
@@ -241,11 +245,15 @@
       return
     endif
 
+    echo "Working..."
+
     let savecwd = getcwd()
     execute printf("chdir %s", escape(directory, ' '))
     let cmd = "gtags --gtagslabel ctags 2>&1 >/dev/null"
     echo system(cmd)
     execute printf("chdir %s", escape(savecwd, ' '))
+
+    echo "gtags file generation complete"
   endfunction
 
 " }}
