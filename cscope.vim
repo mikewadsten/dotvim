@@ -104,6 +104,19 @@
     endif
   endfunction
 
+  function! s:resolve_git_root(git_dir)
+    let answer = a:git_dir
+
+    " If the git repository is a submodule, use rev-parse to get the working
+    " directory.
+    if match(a:git_dir, '.git/modules') != -1
+      let cmd = printf('git --git-dir=%s rev-parse --show-toplevel', escape(a:git_dir, ' '))
+      let answer = substitute(system(cmd), '\n', '', '')
+    endif
+
+    return answer
+  endfunction
+
   function! cscope#detect(...)
     " One optional argument, to override b:git_dir check
     if a:0 > 0
@@ -118,13 +131,8 @@
       if !exists('b:git_dir')
         return 0
       else
-        let root = fnamemodify(b:git_dir, ':h')
+        let root = s:resolve_git_root(b:git_dir)
       endif
-    endif
-
-    if a:0 == 0 && match(b:git_dir, '.git/modules/') != -1
-      let cmd = printf('git --git-dir=%s rev-parse --show-toplevel', b:git_dir)
-      let root = substitute(system(cmd), '\n', '', '')
     endif
 
     let silent = get(g:, 'cscope_detect_silent', 1) ? 'silent! ' : ''
@@ -193,15 +201,61 @@
     augroup END
   endfunction
 
+  function! s:generate_cscope(directory) abort
+    if a:0 > 0
+      let directory = a:1
+    else
+      if !exists("b:git_dir")
+        return
+      endif
+      let directory = s:resolve_git_root(b:git_dir)
+    endif
+
+    if !isdirectory(directory)
+      echoerr "Not a directory"
+      return
+    endif
+
+    let savecwd = getcwd()
+    execute printf("chdir %s", escape(directory, ' '))
+    let cmd = "cscope -Rbq -f cscope.out 2>&1 >/dev/null"
+    echo system(cmd)
+    execute printf("chdir %s", escape(savecwd, ' '))
+  endfunction
+
+  function! s:generate_gtags(...) abort
+    if a:0 > 0
+      let directory = a:1
+    else
+      if !exists("b:git_dir")
+        return
+      endif
+      let directory = s:resolve_git_root(b:git_dir)
+    endif
+
+    if !isdirectory(directory)
+      echoerr "Not a directory"
+      return
+    endif
+
+    let savecwd = getcwd()
+    execute printf("chdir %s", escape(directory, ' '))
+    let cmd = "gtags --gtagslabel ctags 2>&1 >/dev/null"
+    echo system(cmd)
+    execute printf("chdir %s", escape(savecwd, ' '))
+  endfunction
+
 " }}
 
 " TODO: Intelligent completion based on which arg you're doing?
 " Like this? http://vi.stackexchange.com/a/6696
 if executable('cscope')
   command! -nargs=* -complete=file CscopeAdd call s:add_cscope(<f-args>)
+  command! -nargs=? -complete=dir CscopeGen call s:generate_cscope(<f-args>)
 endif
 if executable('gtags-cscope')
   command! -nargs=* -complete=file GtagsAdd  call s:add_gtags(<f-args>)
+  command! -nargs=? -complete=dir GtagsGen call s:generate_gtags(<f-args>)
 endif
 
 " FIXME hack to work around plugin load order
@@ -231,5 +285,3 @@ endif
   set cscopetag
 
 " }}
-
-" TODO: Make a command to generate cscope/gtags from b:git_dir?
