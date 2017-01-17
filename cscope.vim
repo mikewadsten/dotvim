@@ -9,14 +9,10 @@
       return ''
     endif
 
-    " echo "DEBUG:" join(a:000)
-
     " Pull arguments out into variables.
     let file = fnamemodify(expand(a:1), ':p')
     let prepath = expand(get(a:000, 1, fnamemodify(file, ':h')))
     let flags = get(a:000, 2, '-ia')
-
-    " echo "DEBUG2:" join([file, prepath, flags])
 
     " Validate arguments.
     if !filereadable(file)
@@ -107,24 +103,25 @@
   function! s:resolve_git_root(git_dir)
     let answer = a:git_dir
 
-    " If the git repository is a submodule, use rev-parse to get the working
-    " directory.
-    if match(a:git_dir, '.git/modules') != -1
-      let cmd = printf('git --git-dir=%s rev-parse --show-toplevel', a:git_dir)
-      let answer = substitute(system(cmd), '\n', '', '')
-    else
-      " Not a submodule -- just strip the .git off the end
-      let answer = fnamemodify(a:git_dir, ':h')
+    " Since the git repository may be a submodule, use rev-parse to get the
+    " working directory.
+    let cmd = printf('git --git-dir=%s rev-parse --show-toplevel', a:git_dir)
+    let rsp = system(cmd)
+    if v:shell_error
+      echo printf("git rev-parse errored with %d\n%s", v:shell_error, rsp)
+      " Hack for tests - instead of erroring, strip what we assume is .git at
+      " the end of the b:git_dir variable.
+      return fnamemodify(b:git_dir, ':h')
     endif
 
-    return answer
+    return substitute(rsp, '\n', '', '')
   endfunction
 
   function! cscope#detect(...)
     " One optional argument, to override b:git_dir check
     if a:0 > 0
       if !isdirectory(a:1)
-        echo "Not a directory:" a:1
+        echo printf("cscope#detect(%s): Not a directory", shellescape(a:1))
         return 0
       else
         let root = a:1
@@ -140,12 +137,15 @@
 
     let silent = get(g:, 'cscope_detect_silent', 1) ? 'silent! ' : ''
 
-    if filereadable(root . '/cscope.out')
-      execute printf("%sCscopeAdd %s/cscope.out", silent, root)
-    elseif filereadable(root . '/.git/cscope')  " git hooks based
-      execute printf("%sCscopeAdd %s/.git/cscope %s", silent, root, root)
+    if executable('cscope')
+      if filereadable(root . '/cscope.out')
+        execute printf("%sCscopeAdd %s/cscope.out", silent, root)
+      elseif filereadable(root . '/.git/cscope')  " git hooks based
+        execute printf("%sCscopeAdd %s/.git/cscope %s", silent, root, root)
+      endif
     endif
-    if filereadable(root . '/GTAGS')
+
+    if executable('gtags-cscope') && filereadable(root . '/GTAGS')
       execute printf("%sGtagsAdd %s/GTAGS", silent, root)
     endif
 
@@ -197,63 +197,31 @@
     endif
   endfunction
 
-  function! s:fugitive_boot()
-    augroup cscopeDetect
-      autocmd!
-      autocmd User Fugitive call cscope#detect()
-    augroup END
-  endfunction
-
-  function! s:generate_cscope(directory) abort
-    if a:0 > 0
-      let directory = a:1
-    else
+  function! s:generate(directory, tagkind, cmd) abort
+    let directory = a:directory
+    if directory == ''
       if !exists("b:git_dir")
-        return
+        return 0
       endif
       let directory = s:resolve_git_root(b:git_dir)
     endif
 
     if !isdirectory(directory)
       echoerr "Not a directory"
-      return
+      return 0
     endif
 
-    echo "Working..."
+    echo "Working on it..."
 
     let savecwd = getcwd()
     execute printf("chdir %s", escape(directory, ' '))
-    let cmd = "cscope -Rbq -f cscope.out 2>&1 >/dev/null"
-    echo system(cmd)
+    echo system(printf("%s 2>&1 >/dev/null", a:cmd))
     execute printf("chdir %s", escape(savecwd, ' '))
+  
+    redraw
+    echo printf("%s generation complete!", a:tagkind)
 
-    echo "cscope file generation complete"
-  endfunction
-
-  function! s:generate_gtags(...) abort
-    if a:0 > 0
-      let directory = a:1
-    else
-      if !exists("b:git_dir")
-        return
-      endif
-      let directory = s:resolve_git_root(b:git_dir)
-    endif
-
-    if !isdirectory(directory)
-      echoerr "Not a directory"
-      return
-    endif
-
-    echo "Working..."
-
-    let savecwd = getcwd()
-    execute printf("chdir %s", escape(directory, ' '))
-    let cmd = "gtags --gtagslabel ctags 2>&1 >/dev/null"
-    echo system(cmd)
-    execute printf("chdir %s", escape(savecwd, ' '))
-
-    echo "gtags file generation complete"
+    return 1
   endfunction
 
 " }}
@@ -261,16 +229,31 @@
 " TODO: Intelligent completion based on which arg you're doing?
 " Like this? http://vi.stackexchange.com/a/6696
 if executable('cscope')
+  function! cscope#gen_cscope(...) abort
+    return s:generate(get(a:000, 0, ''), 'cscope', 'cscope -Rbq -f cscope.out')
+  endfunction
+
   command! -nargs=* -complete=file CscopeAdd call s:add_cscope(<f-args>)
-  command! -nargs=? -complete=dir CscopeGen call s:generate_cscope(<f-args>) | call cscope#detect(<f-args>)
+  command! -nargs=? -complete=dir CscopeGen call cscope#gen_cscope(<f-args>) | call cscope#detect(<f-args>)
 endif
 if executable('gtags-cscope')
+  function! cscope#gen_gtags(...) abort
+    return s:generate(get(a:000, 0, ''), 'gtags', 'gtags --gtagslabel ctags')
+  endfunction
+
   command! -nargs=* -complete=file GtagsAdd  call s:add_gtags(<f-args>)
-  command! -nargs=? -complete=dir GtagsGen call s:generate_gtags(<f-args>) | call cscope#detect(<f-args>)
+  command! -nargs=? -complete=dir GtagsGen call cscope#gen_gtags(<f-args>) | call cscope#detect(<f-args>)
 endif
 
 " FIXME hack to work around plugin load order
 if get(g:, 'cscope_has_fugitive', 1)
+  function! s:fugitive_boot()
+    augroup cscopeDetect
+      autocmd!
+      autocmd User Fugitive silent call cscope#detect()
+    augroup END
+  endfunction
+
   autocmd! User FugitiveBoot call s:fugitive_boot()
 endif
 
