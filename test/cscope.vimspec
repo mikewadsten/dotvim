@@ -12,7 +12,7 @@ endfunction
 
 describe cscope
   before all
-    call system(printf("rm -f %s/cscope.*out", s:cwd))
+    call system(printf("rm -f %s/cscope.*out*", s:cwd))
     call system(printf("rm -f %s/GPATH %s/GTAGS %s/GRTAGS", s:cwd, s:cwd, s:cwd))
 
     cscope kill -1
@@ -23,7 +23,7 @@ describe cscope
   end
 
   after all
-    call system(printf("rm -f %s/cscope.*out", s:cwd))
+    call system(printf("rm -f %s/cscope.*out*", s:cwd))
     call system(printf("rm -f %s/GPATH %s/GTAGS %s/GRTAGS", s:cwd, s:cwd, s:cwd))
   end
 
@@ -139,6 +139,119 @@ describe cscope
       call s:assert.equals(cscope_connection(4, s:cwd . "/GTAGS", s:cwd), 1, "No matching cscope connection after GtagsAdd")
 
       call s:check_tag()
+    end
+  end
+end
+
+describe cscope#gen...
+  before all
+    execute printf("chdir %s", s:cwd)
+    source ../cscope.vim
+    chdir -
+  end
+
+  after all
+    call system(printf('rm -f %s/cscope*.out*', s:cwd))
+    call system(printf('rm -f %s/GPATH %s/GTAGS %s/GRTAGS', s:cwd, s:cwd, s:cwd))
+  end
+
+  before each
+    call system(printf('rm -f %s/cscope*.out*', s:cwd))
+    call system(printf('rm -f %s/GPATH %s/GTAGS %s/GRTAGS', s:cwd, s:cwd, s:cwd))
+
+    cscope kill -1
+    chdir /tmp
+
+    unlet! b:git_dir
+  end
+
+  describe #gen_cscope
+    before each
+      call system(printf('rm -f %s/src/cscope*.out*', s:cwd))
+    end
+
+    after each
+      call system(printf('rm -f %s/src/cscope*.out*', s:cwd))
+    end
+
+    it works with directory argument
+      call s:assert.false(filereadable(printf("%s/src/cscope.out", s:cwd)))
+      let retval = cscope#gen_cscope(s:cwd . '/src')
+
+      call s:assert.equals(retval, 1)
+      call s:assert.true(filereadable(printf("%s/src/cscope.out", s:cwd)))
+
+      " However, it doesn't add a connection automatically.
+      call s:assert.equals(cscope_connection(), 0, "Saw connection after")
+    end
+
+    it uses b:git_dir when called without argument
+      call s:assert.false(filereadable(printf("%s/src/cscope.out", s:cwd)))
+
+      let b:git_dir = printf('%s/src/.git', s:cwd)
+      let retval = cscope#gen_cscope()
+
+      call s:assert.equals(retval, 1)
+      call s:assert.true(filereadable(printf("%s/src/cscope.out", s:cwd)))
+
+      " However, it doesn't add a connection automatically.
+      call s:assert.equals(cscope_connection(), 0, "Saw connection after")
+    end
+
+    " Funny name, but I put it here to reuse before/after logic
+    it is called by CscopeGen and then we detect it
+      call s:assert.false(filereadable(printf("%s/src/cscope.out", s:cwd)))
+      execute printf("CscopeGen %s/src", s:cwd)
+
+      call s:assert.true(filereadable(printf("%s/src/cscope.out", s:cwd)))
+
+      call s:assert.equals(cscope_connection(2, s:cwd.  "/src/cscope.out"), 1,
+            \              "Did not automatically connect to new database")
+    end
+  end
+
+  describe #gen_gtags
+    before each
+      call system(printf('rm -f %s/src/GPATH %s/src/GTAGS %s/src/GRTAGS', s:cwd, s:cwd, s:cwd))
+    end
+
+    after each
+      call system(printf('rm -f %s/src/GPATH %s/src/GTAGS %s/src/GRTAGS', s:cwd, s:cwd, s:cwd))
+    end
+
+    it works with directory argument
+      call s:assert.false(filereadable(printf("%s/src/GTAGS", s:cwd)))
+      let retval = cscope#gen_gtags(s:cwd . '/src')
+
+      call s:assert.equals(retval, 1)
+      call s:assert.true(filereadable(printf("%s/src/GTAGS", s:cwd)))
+
+      " However, it doesn't add a connection automatically.
+      call s:assert.equals(cscope_connection(), 0, "Saw connection after")
+    end
+
+    it uses b:git_dir when called without argument
+      call s:assert.false(filereadable(printf("%s/src/GTAGS", s:cwd)))
+
+      let b:git_dir = printf('%s/src/.git', s:cwd)
+      let retval = cscope#gen_gtags()
+
+      call s:assert.equals(retval, 1)
+      call s:assert.true(filereadable(printf("%s/src/GTAGS", s:cwd)))
+
+      " However, it doesn't add a connection automatically.
+      call s:assert.equals(cscope_connection(), 0, "Saw connection after")
+    end
+
+    " Funny name, but I put it here to reuse before/after logic
+    it is called by GtagsGen and then we detect it
+      call s:assert.false(filereadable(printf("%s/src/GTAGS", s:cwd)))
+      execute printf("GtagsGen %s/src", s:cwd)
+
+      call s:assert.true(filereadable(printf("%s/src/GTAGS", s:cwd)))
+
+      call s:assert.equals(cscope_connection(2, s:cwd.  "/src/GTAGS"), 1,
+            \              "Did not automatically connect to new database")
     end
   end
 end
