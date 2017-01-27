@@ -261,15 +261,16 @@ endif
 
   nnoremap <silent>   <Plug>cscopePrompt :call <SID>prompt()<CR>
   " Launch prompt
-  nmap <C-@><Space>   <Plug>cscopePrompt
-  nmap <C-@><C-@>     <Plug>cscopePrompt
-  nmap <C-@>?         <Plug>cscopePrompt
-  nmap <C-@><C-?>     <Plug>cscopePrompt
+  let s:trigger = has("nvim") ? "<C-Space>" : "<C-@>"
+  exe printf("nmap %s<Space>   <Plug>cscopePrompt", s:trigger)
+  exe printf("nmap %s%s        <Plug>cscopePrompt", s:trigger, s:trigger)
+  exe printf("nmap %s?         <Plug>cscopePrompt", s:trigger)
+  exe printf("nmap %s<C-?>     <Plug>cscopePrompt", s:trigger)
 
   " Go right to a query operation
   for s:c in ['s', 'g', 't', 'c', 'd', 'e', 'f', 'i']
     let s:nr = char2nr(s:c)
-    execute printf("nnoremap <silent> <C-@>%c :call <SID>do_cs_find('%c')<CR>", s:nr, s:nr)
+    execute printf("nnoremap <silent> %s%c :call <SID>do_cs_find('%c')<CR>", s:trigger, s:nr, s:nr)
     unlet s:c
     unlet s:nr
   endfor
