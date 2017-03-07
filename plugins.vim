@@ -41,6 +41,10 @@ endif
 
   let g:commentary_map_backslash = 0
 
+  " let g:ale_linters = {'python': ['pylint']}
+
+  let g:indentLine_setColors = 0
+
 " }}
 
 " Use DotvimPath() for full standalone installation. :)
@@ -57,7 +61,8 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-scriptease'
 
-Plug 'nathanaelkane/vim-indent-guides'
+" Plug 'nathanaelkane/vim-indent-guides'
+Plug 'Yggdroot/indentLine'
 Plug 'airblade/vim-gitgutter'
 
 Plug 'tmhedberg/matchit'
@@ -86,6 +91,10 @@ Plug 'syngan/vim-vimlint'
 
 Plug 'thinca/vim-themis'
 Plug 'rust-lang/rust.vim'
+
+Plug 'tpope/vim-abolish'
+
+Plug 'w0rp/ale'
 
 " TODO: vim-over?
 call plug#end()
