@@ -43,7 +43,8 @@ endif
 
   " let g:ale_linters = {'python': ['pylint']}
 
-  let g:indentLine_setColors = 0
+  let g:indentLine_setColors = 1
+  let g:indentLine_color_term = 0
 
 " }}
 
