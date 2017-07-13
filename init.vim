@@ -172,6 +172,10 @@ set noshowmode " This is what zipline is for
   " switch.vim
   nnoremap <silent> <BS> :Switch<CR>
 
+  " Pressing # on a visual selection will wrap it with #if/endif and leave the
+  " cursor after the '#if '
+  vnoremap # <Esc>'>o#endif<C-o>'<<C-o>O#if 
+
 " }
 
 " Switch to current file directory automatically
@@ -372,5 +376,9 @@ endfunction
 autocmd Filetype vim nnoremap <buffer> <silent> gz :execute <SID>grab_code_here()<CR>
 
 " }
+
+if filereadable(expand('~/.vimrc.digi'))
+  source ~/.vimrc.digi
+endif
 
 " vim: set ft=vim et sw=2 ts=2 sts=2:
