@@ -67,7 +67,7 @@ Plug 'Yggdroot/indentLine'
 Plug 'airblade/vim-gitgutter'
 
 Plug 'tmhedberg/matchit'
-Plug 'python_match.vim'
+Plug 'vim-scripts/python_match.vim'
 
 Plug 'python.vim'
 
