@@ -221,7 +221,15 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
 
 " TODO: neocomplete
 
-" TODO: neovim-specific stuff
+" neovim-specific stuff {{
+
+  if exists('&inccommand')
+    " Live substitution. Do it in a split window with all the changing lines.
+    " Super cool.
+    set inccommand=split
+  endif
+
+" }}
 
 " Plugins! {{
 
