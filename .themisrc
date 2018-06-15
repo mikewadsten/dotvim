@@ -1,0 +1,6 @@
+source init.vim
+
+" Both Vim 8 and Neovim seem to segfault if gitgutter is left enabled.
+" In Neovim, the crash is due to ScreenLines being null.
+" Interesting...
+let g:gitgutter_enabled=0
