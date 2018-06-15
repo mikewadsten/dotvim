@@ -20,5 +20,7 @@ cache:
 
 script:
   - (echo ':PlugInstall | :qa' | vim -u init.vim -e; errcode=$?; if [ $errcode = 1 ]; then echo "Returned 1, which is okay?"; else echo "Returned $errcode"; exit 255; fi)
+  - vim --version
   - PATH=$HOME/global/bin/:$PATH THEMIS_ARGS='-u init.vim -e -s' /tmp/themis/bin/themis --reporter spec
+  - $HOME/vim-7.4/bin/vim --version
   - PATH=$HOME/global/bin:$HOME/vim-7.4/bin/:$PATH THEMIS_ARGS='-u init.vim -e -s' /tmp/themis/bin/themis --reporter spec
