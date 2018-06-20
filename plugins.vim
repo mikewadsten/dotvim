@@ -69,7 +69,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tmhedberg/matchit'
 Plug 'vim-scripts/python_match.vim'
 
-Plug 'python.vim'
+Plug 'vim-scripts/python.vim'
 
 Plug 'justinmk/vim-dirvish'
 
@@ -96,6 +96,8 @@ Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-abolish'
 
 Plug 'w0rp/ale'
+
+Plug 'mikewadsten/snipsnip.vim'
 
 " TODO: vim-over?
 call plug#end()
