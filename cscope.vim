@@ -139,9 +139,9 @@
 
     if executable('cscope')
       if filereadable(root . '/cscope.out')
-        execute printf("%sCscopeAdd %s/cscope.out", silent, root)
-      elseif filereadable(root . '/.git/cscope')  " git hooks based
-        execute printf("%sCscopeAdd %s/.git/cscope %s", silent, root, root)
+        execute printf("%sCscopeAdd %s/cscope.out %s", silent, root, root)
+      elseif filereadable(b:git_dir . '/cscope')  " git hooks based
+        execute printf("%sCscopeAdd %s/.git/cscope %s", silent, b:git_dir, root)
       endif
     endif
 
