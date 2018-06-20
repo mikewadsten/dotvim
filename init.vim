@@ -86,7 +86,7 @@ set switchbuf=useopen
 
 set list
 " TODO
-set listchars=tab:\ \ 
+set listchars=tab:,\ 
 
 set number
 set noshowmatch                         " This just slows down typing if it's on.
@@ -277,6 +277,9 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
 
   " hi LineNR ctermbg=NONE ctermfg=237
   hi VertSplit ctermbg=236 ctermfg=236
+
+  " Make listchars tab more visible
+  hi Whitespace ctermbg=237
 
   " The following content provided by:
   " howivim airblade
