@@ -97,7 +97,13 @@ Plug 'tpope/vim-abolish'
 
 Plug 'w0rp/ale'
 
+Plug 'tpope/vim-endwise'
+
 Plug 'mikewadsten/snipsnip.vim'
+
+if filereadable(expand('~/.vimrc.plugins.digi'))
+  source ~/.vimrc.plugins.digi
+endif
 
 " TODO: vim-over?
 call plug#end()
