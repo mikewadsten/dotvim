@@ -101,6 +101,8 @@ Plug 'tpope/vim-endwise'
 
 Plug 'mikewadsten/snipsnip.vim'
 
+Plug 'tpope/vim-sleuth'
+
 if filereadable(expand('~/.vimrc.plugins.digi'))
   source ~/.vimrc.plugins.digi
 endif
