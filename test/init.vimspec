@@ -6,9 +6,13 @@ function! s:exec(command)
     " Vim 7.4.2008 and later
     return execute(a:command)
   elseif exists('*evalcmd')
+    " Vim 7.4.1996 to .2007
     return evalcmd(a:command)
   else
-    call s:assert.fail("Neither evalcmd nor execute exist?")
+    redir => l:cmdoutput
+    execute a:command
+    redir END
+    return l:cmdoutput
   endif
 endfunction
 
