@@ -1,6 +1,17 @@
 let s:cwd = getcwd() . '/test'
 let s:assert = themis#helper('assert')
 
+function! s:exec(command)
+  if exists('*execute')
+    " Vim 7.4.2008 and later
+    return execute(a:command)
+  elseif exists('*evalcmd')
+    return evalcmd(a:command)
+  else
+    call s:assert.fail("Neither evalcmd nor execute exist?")
+  endif
+endfunction
+
 describe init.vim
   describe auto-lcd
     it is okay with spaces in the file path
@@ -16,9 +27,9 @@ describe init.vim
     end
 
     it highlights tabs differently from the normal background
-      let l:normal_hi_text = execute('highlight Normal')
+      let l:normal_hi_text = s:exec('highlight Normal')
       let l:normal_bg = substitute(l:normal_hi_text, '.*ctermbg=\(\d\+\).*', '\1', '')
-      let l:ws_hi_text = execute('highlight Whitespace')
+      let l:ws_hi_text = s:exec('highlight Whitespace')
       " Sanity check.
       call s:assert.match(l:ws_hi_text, 'ctermbg=\(\d\+\)', "Whitespace does not override ctermbg")
       let l:ws_bg = substitute(l:ws_hi_text, '.*ctermbg=\(\d\+\).*', '\1', '')
