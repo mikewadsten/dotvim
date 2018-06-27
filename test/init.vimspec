@@ -8,4 +8,22 @@ describe init.vim
       call s:assert.equals(getcwd(), printf("%s/src/path\ space", s:cwd))
     end
   end
+
+  describe listchars
+    it calls out tabs
+      call s:assert.match(&listchars, 'tab:. ')
+      call s:assert.equals(&list, 1, "'list' not set")
+    end
+
+    it highlights tabs differently from the normal background
+      let l:normal_hi_text = execute('highlight Normal')
+      let l:normal_bg = substitute(l:normal_hi_text, '.*ctermbg=\(\d\+\).*', '\1', '')
+      let l:ws_hi_text = execute('highlight Whitespace')
+      " Sanity check.
+      call s:assert.match(l:ws_hi_text, 'ctermbg=\(\d\+\)', "Whitespace does not override ctermbg")
+      let l:ws_bg = substitute(l:ws_hi_text, '.*ctermbg=\(\d\+\).*', '\1', '')
+
+      call s:assert.not_equals(l:normal_bg, l:ws_bg, "Whitespace background should not be Normal background")
+    end
+  end
 end
