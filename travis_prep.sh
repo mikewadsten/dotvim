@@ -42,7 +42,7 @@ fi
 if ! test -d $HOME/global/bin
 then
     echo "Downloading and building Global"
-    wget -q https://tamacom.com/global/global-6.5.5.tar.gz -O $HOME/global-6.5.5.tar.gz
+    wget -q https://ftp.gnu.org/gnu/global/global-6.5.5.tar.gz -O $HOME/global-6.5.5.tar.gz
     mkdir $HOME/global-6.5.5-src
     cd $HOME
     tar xvzf global-6.5.5.tar.gz -C $HOME/global-6.5.5-src
