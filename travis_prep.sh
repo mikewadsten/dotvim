@@ -46,7 +46,7 @@ then
     mkdir $HOME/global-6.5.5-src
     cd $HOME
     tar xvzf global-6.5.5.tar.gz -C $HOME/global-6.5.5-src
-    cd $HOME/global-6.5.5-src
+    cd $HOME/global-6.5.5-src/global-6.5.5
     ./configure --prefix=$HOME/global
     make && make install
 fi
