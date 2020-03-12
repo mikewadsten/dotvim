@@ -8,8 +8,16 @@ execute 'set runtimepath+=' . s:runtime_dir
 let s:plug_path = s:autoload_dir . '/plug.vim'
 if empty(glob(s:plug_path))
   echo "Looks like the first time setup for vim-plug..."
-  silent exe '!curl -fLo ' . s:plug_path ' --create-dirs ' .
+  if executable("curl")
+    silent exe '!curl -fLo ' . s:plug_path ' --create-dirs ' .
         \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  elseif executable("wget")
+    silent exe '!wget -q -O ' . s:plug_path
+        \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  else
+    echoerr "You need to install curl (or wget, but curl is good)"
+    quit
+  endif
   autocmd VimEnter * PlugInstall | execute "source " . DotvimPath() . '/init.vim'
 endif
 
