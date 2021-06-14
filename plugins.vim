@@ -53,6 +53,10 @@ endif
 
   let g:indentLine_setColors = 1
   let g:indentLine_color_term = 236
+  " indentline plugin hides quotes and stuff in JSON files. Ew.
+  autocmd FileType json :IndentLinesDisable
+
+  let g:snipMate = { 'snippet_version': 1 }
 
 " }}
 
