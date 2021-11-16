@@ -74,6 +74,9 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-scriptease'
 
+" I've grown attached to Gblame
+command! Gblame Git blame
+
 " Plug 'nathanaelkane/vim-indent-guides'
 Plug 'Yggdroot/indentLine'
 Plug 'airblade/vim-gitgutter'
