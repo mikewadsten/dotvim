@@ -38,6 +38,9 @@ set viewoptions=folds,options,cursor
 " Better Unix compatibility on Windows
 set viewoptions+=unix
 
+" Neovim defaults to block cursor, I don't like it
+set guicursor=
+
 set scrolloff=1 scrolljump=1
 set sidescrolloff=5
 set display=lastline

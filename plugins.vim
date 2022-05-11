@@ -52,8 +52,13 @@ endif
   " let g:ale_linters = {'python': ['pylint']}
 
   let g:indentLine_setColors = 1
+  let g:indentLine_setConceal = 0
   let g:indentLine_color_term = 236
   " indentline plugin hides quotes and stuff in JSON files. Ew.
+  autocmd FileType json :IndentLinesDisable
+
+  let g:snipMate = { 'snippet_version': 1 }
+
   autocmd FileType json :IndentLinesDisable
 
   let g:snipMate = { 'snippet_version': 1 }
@@ -118,15 +123,15 @@ Plug 'mikewadsten/snipsnip.vim'
 
 Plug 'tpope/vim-sleuth'
 
-if filereadable(expand('~/.vimrc.plugins.digi'))
-  source ~/.vimrc.plugins.digi
-endif
-
 " udev rules!
 Plug 'vim-scripts/syntaxudev.vim'
 
 " Switching between .c and .h files easily
 Plug 'vim-scripts/a.vim'
+
+if filereadable(expand('~/.vimrc.plugins.digi'))
+  source ~/.vimrc.plugins.digi
+endif
 
 " TODO: vim-over?
 call plug#end()
