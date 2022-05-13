@@ -129,6 +129,8 @@ Plug 'vim-scripts/syntaxudev.vim'
 " Switching between .c and .h files easily
 Plug 'vim-scripts/a.vim'
 
+Plug 'Vimjas/vim-python-pep8-indent'
+
 if filereadable(expand('~/.vimrc.plugins.digi'))
   source ~/.vimrc.plugins.digi
 endif
