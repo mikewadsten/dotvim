@@ -131,6 +131,10 @@ Plug 'vim-scripts/a.vim'
 
 Plug 'Vimjas/vim-python-pep8-indent'
 
+if has('nvim')
+  Plug 'neovim/nvim-lspconfig'
+endif
+
 if filereadable(expand('~/.vimrc.plugins.digi'))
   source ~/.vimrc.plugins.digi
 endif

@@ -395,4 +395,8 @@ if filereadable(expand('~/.vimrc.digi'))
   source ~/.vimrc.digi
 endif
 
+if has('nvim')
+  call LoadDotvimFile('nvim_init.lua')
+endif
+
 " vim: set ft=vim et sw=2 ts=2 sts=2:
