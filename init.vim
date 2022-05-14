@@ -80,7 +80,12 @@ if has('persistent_undo')
   set undofile
   set undolevels=1000
   set undoreload=10000
-  let &undodir=$HOME . '/.vimundo'
+  " Neovim sets undodir to e.g. ~/.local/share/nvim/undo by default,
+  " which is nice since it won't conflict with Vim if/when I swap back
+  " and forth.
+  if !has('nvim')
+    let &undodir=$HOME . '/.vimundo'
+  endif
 endif
 
 " set spell
