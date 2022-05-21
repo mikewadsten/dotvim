@@ -82,6 +82,11 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(
         bufnr, 'n', '<Leader>l', '',
         {callback=lsphelp, noremap=true, silent=true})
+
+    local lsp_sig_available, sig = pcall(require, 'lsp_signature')
+    if lsp_sig_available then
+        sig.on_attach()
+    end
 end
 
 local function setup_lsp(lsp_)
