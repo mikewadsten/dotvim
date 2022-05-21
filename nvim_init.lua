@@ -60,6 +60,18 @@ vim.api.nvim_set_keymap(
     'n', '<Leader>l', '',
     {callback=lsphelp, noremap=true, silent=true})
 
+vim.cmd('highlight DiagnosticWarn ctermfg=3 ctermbg=235')
+vim.cmd('highlight! link DiagnosticError DiagnosticWarn')
+vim.cmd('highlight DiagnosticUnderlineWarn ctermbg=yellow ctermfg=green cterm=bold')
+local diagsigns = {
+    Warn = "\u{1f4d0}",  -- Triangular Ruler
+    Error = "\u{26d4}",  -- No Entry
+}
+for type, icon in pairs(diagsigns) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
+
 local on_attach = function(client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')

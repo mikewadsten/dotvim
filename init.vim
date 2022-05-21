@@ -303,6 +303,10 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
   hi User6 term=bold cterm=bold ctermfg=1          guifg=Red                " WarningMsg
   set laststatus=2
 
+  if has('signs')
+    hi SignColumn ctermbg=235
+  endif
+
   " My own personal statusline 'plugin'
   call LoadDotvimFile('zipline.vim')
 
