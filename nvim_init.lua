@@ -67,7 +67,7 @@ vim.cmd('highlight FloatBorder ctermfg=245')
 
 vim.cmd('highlight DiagnosticWarn ctermfg=3 ctermbg=235')
 vim.cmd('highlight! link DiagnosticError DiagnosticWarn')
-vim.cmd('highlight DiagnosticUnderlineWarn ctermbg=yellow ctermfg=green cterm=bold')
+vim.cmd('highlight DiagnosticUnderlineWarn ctermbg=yellow ctermfg=16 cterm=bold')
 local diagsigns = {
     Warn = "\u{1f4d0}",  -- Triangular Ruler
     Error = "\u{26d4}",  -- No Entry
