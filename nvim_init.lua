@@ -65,16 +65,23 @@ vim.api.nvim_set_keymap(
 vim.cmd('highlight NormalFloat cterm=NONE')
 vim.cmd('highlight FloatBorder ctermfg=245')
 
-vim.cmd('highlight DiagnosticWarn ctermfg=3 ctermbg=235')
+vim.cmd('highlight! DiagnosticFloatingWarn ctermfg=3 ctermbg=235 cterm=NONE')
 vim.cmd('highlight! link DiagnosticError DiagnosticWarn')
 vim.cmd('highlight DiagnosticUnderlineWarn ctermbg=yellow ctermfg=16 cterm=bold')
 local diagsigns = {
-    Warn = "\u{1f4d0}",  -- Triangular Ruler
-    Error = "\u{26d4}",  -- No Entry
+    Warn = {
+        icon = "\u{1f4d0}",  -- Triangular Ruler
+        fg = 3, -- Yellow or whatever
+    },
+    Error = {
+        icon = "\u{26d4}",  -- No Entry
+        fg = 1, -- Red
+    },
 }
-for type, icon in pairs(diagsigns) do
+for type, sign in pairs(diagsigns) do
     local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+    vim.cmd('highlight Diagnostic' .. type .. ' ctermbg=235 cterm=bold,standout ctermfg=' .. sign.fg)
+    vim.fn.sign_define(hl, { text = sign.icon, texthl = hl, numhl = hl })
 end
 
 local on_attach = function(client, bufnr)
@@ -90,7 +97,6 @@ local on_attach = function(client, bufnr)
             local opts = {
                 focusable = false,
                 close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-                -- TODO how to make it actually rounded? Font maybe?
                 border = 'rounded',
                 source = 'always',
                 prefix = ' ',
