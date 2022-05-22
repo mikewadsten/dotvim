@@ -60,6 +60,11 @@ vim.api.nvim_set_keymap(
     'n', '<Leader>l', '',
     {callback=lsphelp, noremap=true, silent=true})
 
+-- solarized colorscheme defaults floating window to reversed colors, which, ew
+-- Then here we define FloatBorder so that it's just a round gray line
+vim.cmd('highlight NormalFloat cterm=NONE')
+vim.cmd('highlight FloatBorder ctermfg=245')
+
 vim.cmd('highlight DiagnosticWarn ctermfg=3 ctermbg=235')
 vim.cmd('highlight! link DiagnosticError DiagnosticWarn')
 vim.cmd('highlight DiagnosticUnderlineWarn ctermbg=yellow ctermfg=green cterm=bold')
