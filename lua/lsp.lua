@@ -65,7 +65,7 @@ vim.api.nvim_set_keymap(
 vim.cmd('highlight NormalFloat cterm=NONE')
 vim.cmd('highlight FloatBorder ctermfg=245')
 
-vim.cmd('highlight! DiagnosticFloatingWarn ctermfg=3 ctermbg=235 cterm=NONE')
+vim.cmd('highlight! DiagnosticFloatingWarn ctermfg=3 ctermbg=235 cterm=NONE guifg=Orange')
 vim.cmd('highlight! link DiagnosticError DiagnosticWarn')
 vim.cmd('highlight DiagnosticUnderlineWarn'
         .. ' ctermbg=yellow ctermfg=16 cterm=bold'
