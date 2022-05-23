@@ -274,20 +274,28 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
   let g:solarized_termcolors=256
   let g:solarized_termtrans = 0
   let g:solarized_contrast="high"
+  let g:solarized_italics = 0
   try
     set background=dark
-    colorscheme solarized
+    " colorscheme solarized
+    set termguicolors
+    colorscheme solarized8
   catch /E185:/
     echo "solarized colorscheme not found, let's do a PlugInstall"
     PlugInstall
-    colorscheme solarized
+    colorscheme solarized8
   endtry
 
   " hi LineNR ctermbg=NONE ctermfg=237
-  hi VertSplit ctermbg=236 ctermfg=236
+  hi VertSplit ctermbg=236 ctermfg=236 guibg=#262626 guifg=#262626
 
   " Make listchars tab more visible
-  hi Whitespace ctermbg=237
+  hi Whitespace ctermbg=237 guibg=#363636
+  hi! link SpecialKey Whitespace
+
+  hi Normal guibg=#1c1c1c
+  hi ColorColumn ctermbg=236 guibg=#262626
+  hi LineNr guibg=#262626
 
   " The following content provided by:
   " howivim airblade
@@ -304,7 +312,7 @@ autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" |
   set laststatus=2
 
   if has('signs')
-    hi SignColumn ctermbg=235
+    hi SignColumn ctermbg=235 guibg=#262626
   endif
 
   " My own personal statusline 'plugin'

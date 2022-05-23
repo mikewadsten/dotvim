@@ -69,6 +69,7 @@ endif
 call plug#begin(DotvimPath() . '/.plugged')
 
 Plug 'altercation/vim-colors-solarized'
+Plug 'lifepillar/vim-solarized8'
 
 " So much Tim Pope...
 Plug 'tpope/vim-surround'

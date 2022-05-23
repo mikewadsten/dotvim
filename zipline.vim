@@ -6,15 +6,15 @@
 " Inspiration drawn from itchyny/lightline.vim
 
 " Most colors ripped from lightline solarized_dark scheme.
-hi Zipline_Blue     ctermfg=230 ctermbg=33
-hi Zipline_Red      ctermfg=230 ctermbg=124
-hi Zipline_Green    ctermfg=230 ctermbg=64
-hi Zipline_Magenta  ctermfg=230 ctermbg=125
-hi Zipline_Orange   ctermfg=230 ctermbg=166
-hi Zipline_Git      ctermfg=230 ctermbg=239
+hi Zipline_Blue     ctermfg=230 ctermbg=33  guifg=#ffffd7 guibg=#0087ff
+hi Zipline_Red      ctermfg=230 ctermbg=124 guifg=#ffffd7 guibg=#ff0000
+hi Zipline_Green    ctermfg=230 ctermbg=64  guifg=#ffffd7 guibg=#5f8700
+hi Zipline_Magenta  ctermfg=230 ctermbg=125 guifg=#ffffd7 guibg=#af005f
+hi Zipline_Orange   ctermfg=230 ctermbg=166 guifg=#ffffd7 guibg=#d75f00
+hi Zipline_Git      ctermfg=230 ctermbg=239 guifg=#ffffd7 guibg=#4b4b4b
 
-hi Zipline_Gray     ctermfg=233 ctermbg=244
-hi Zipline_Grayer   ctermfg=247 ctermbg=239
+hi Zipline_Gray     ctermfg=233 ctermbg=244 guifg=#141414 guibg=#808080
+hi Zipline_Grayer   ctermfg=247 ctermbg=239 guifg=#111111 guibg=#999999
 
 " Give mode highlight groups unique names
 hi link Zipline_Mode_Normal   Zipline_Blue
@@ -23,10 +23,10 @@ hi link Zipline_Mode_Visual   Zipline_Magenta
 hi link Zipline_Mode_Replace  Zipline_Red
 
 hi clear StatusLine
-hi StatusLine   term=NONE cterm=NONE ctermfg=245 ctermbg=235
-hi StatusLineNC term=NONE cterm=NONE ctermfg=10  ctermbg=235
-hi ZiplineNC_Filename term=NONE cterm=NONE ctermfg=4 ctermbg=235
-hi Zipline_StlOrangeText ctermfg=166 ctermbg=235
+hi StatusLine         term=NONE cterm=NONE ctermfg=245 ctermbg=235 guifg=#8a8a8a guibg=#262626
+hi StatusLineNC       term=NONE cterm=NONE ctermfg=10  ctermbg=235 guifg=Gray    guibg=#262626
+hi ZiplineNC_Filename term=NONE cterm=NONE ctermfg=4   ctermbg=235 guifg=#5555ff guibg=#262626
+hi Zipline_StlOrangeText                   ctermfg=166 ctermbg=235 guifg=#d75f00 guibg=#262626
 
 function! zipline#mode() abort
   if s:ishelp()

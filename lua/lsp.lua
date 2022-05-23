@@ -67,20 +67,25 @@ vim.cmd('highlight FloatBorder ctermfg=245')
 
 vim.cmd('highlight! DiagnosticFloatingWarn ctermfg=3 ctermbg=235 cterm=NONE')
 vim.cmd('highlight! link DiagnosticError DiagnosticWarn')
-vim.cmd('highlight DiagnosticUnderlineWarn ctermbg=yellow ctermfg=16 cterm=bold')
+vim.cmd('highlight DiagnosticUnderlineWarn'
+        .. ' ctermbg=yellow ctermfg=16 cterm=bold'
+        .. ' guibg=Orange   guifg=Black gui=bold')
 local diagsigns = {
     Warn = {
         icon = "\u{1f4d0}",  -- Triangular Ruler
-        fg = 3, -- Yellow or whatever
+        fg = { term = 3, gui = 'Orange' },
     },
     Error = {
         icon = "\u{26d4}",  -- No Entry
-        fg = 1, -- Red
+        fg = { term = 1, gui = 'Red' },
     },
 }
 for type, sign in pairs(diagsigns) do
     local hl = "DiagnosticSign" .. type
-    vim.cmd('highlight Diagnostic' .. type .. ' ctermbg=235 cterm=bold,standout ctermfg=' .. sign.fg)
+    vim.cmd(
+        'highlight Diagnostic' .. type
+        .. ' ctermbg=235 guibg=#073642 cterm=bold,standout gui=bold,standout'
+        .. ' ctermfg=' .. sign.fg.term .. ' guifg=' .. sign.fg.gui )
     vim.fn.sign_define(hl, { text = sign.icon, texthl = hl, numhl = hl })
 end
 
