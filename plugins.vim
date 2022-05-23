@@ -134,6 +134,9 @@ Plug 'Vimjas/vim-python-pep8-indent'
 if has('nvim')
   Plug 'neovim/nvim-lspconfig'
   Plug 'ray-x/lsp_signature.nvim'
+
+  Plug 'nvim-lua/plenary.nvim'
+  Plug 'nvim-telescope/telescope.nvim'
 endif
 
 if filereadable(expand('~/.vimrc.plugins.digi'))
