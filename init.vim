@@ -405,7 +405,8 @@ if filereadable(expand('~/.vimrc.digi'))
 endif
 
 if has('nvim')
-  call LoadDotvimFile('nvim_init.lua')
+  let &runtimepath = s:dotvim_path . ',' . &runtimepath
+  lua require 'dotvim'
 endif
 
 " vim: set ft=vim et sw=2 ts=2 sts=2:
