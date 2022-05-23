@@ -2,3 +2,4 @@
 -- (This is basically my __init__.py)
 require 'config'
 require 'lsp'
+require 'mappings'

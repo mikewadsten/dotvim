@@ -118,10 +118,15 @@ local on_attach = function(client, bufnr)
 end
 
 local function setup_lsp(lsp_)
-    if vim.fn.executable('pylsp') then
-        lsp_.pylsp.setup{
-            on_attach = on_attach,
-        }
+    local servers = {
+        'pylsp', 'clangd',
+    }
+    for _, server in pairs(servers) do
+        if vim.fn.executable(server) then
+            lsp_[server].setup {
+                on_attach = on_attach,
+            }
+        end
     end
 end
 
