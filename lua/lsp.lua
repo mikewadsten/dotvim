@@ -122,7 +122,7 @@ local function setup_lsp(lsp_)
         'pylsp', 'clangd',
     }
     for _, server in pairs(servers) do
-        if vim.fn.executable(server) then
+        if vim.fn.executable(server) == 1 then
             lsp_[server].setup {
                 on_attach = on_attach,
             }

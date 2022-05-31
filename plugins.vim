@@ -116,7 +116,10 @@ Plug 'rust-lang/rust.vim'
 
 Plug 'tpope/vim-abolish'
 
-Plug 'w0rp/ale'
+if !has('nvim')
+  " Only use ALE on regular Vim
+  Plug 'w0rp/ale'
+endif
 
 Plug 'tpope/vim-endwise'
 
