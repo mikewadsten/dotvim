@@ -117,13 +117,35 @@ local on_attach = function(client, bufnr)
     end
 end
 
+local function pylsp_on_init(client)
+    if vim.fn.filereadable(client.config.cmd_cwd .. '/nose2.cfg') == 1 then
+        -- The only project I work on where nose2 is used is Python 2-based.
+        -- python-lsp-server (pylsp) is Python 3.7+, so its use of pyflakes
+        -- is also Python 3, which makes it barf at things like `print abc`.
+        -- So... just disable pyflakes when working on such projects.
+        client.config.settings.pylsp = {
+            plugins = {
+                pyflakes = { enabled = false }
+            }
+        }
+        client.notify("workspace/didChangeConfiguration")
+    end
+    return true
+end
+
 local function setup_lsp(lsp_)
     local servers = {
-        'pylsp', 'clangd',
+        pylsp = {
+            on_init = pylsp_on_init,
+        },
+        clangd = {
+            on_init = nil,
+        }
     }
-    for _, server in pairs(servers) do
+    for server, cfg in pairs(servers) do
         if vim.fn.executable(server) == 1 then
             lsp_[server].setup {
+                on_init = cfg.on_init,
                 on_attach = on_attach,
             }
         end
