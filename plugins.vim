@@ -141,6 +141,12 @@ if has('nvim')
 
   Plug 'nvim-lua/plenary.nvim'
   Plug 'nvim-telescope/telescope.nvim'
+
+  if has('nvim-0.8')
+    Plug 'SmiteshP/nvim-navic'
+    " Plug 'utilyre/barbecue.nvim'
+    Plug 'mikewadsten/barbecue.nvim'
+  endif
 endif
 
 if filereadable(expand('~/.vimrc.plugins.digi'))

@@ -152,6 +152,29 @@ local function setup_lsp(lsp_)
     end
 end
 
+local function setup_barbecue(bbq)
+    bbq.setup({
+        symbols = {
+            -- I don't necessary have fancy fonts installed
+            separator = ">",
+        },
+        -- Again, I don't necessarily have fancy fonts with symbols installed
+        kinds = false,
+    })
+end
+
+if vim.fn.has('nvim-0.8') then
+    local barbecue_available, bbq = pcall(require, 'barbecue')
+    if barbecue_available then
+        setup_barbecue(bbq)
+    else
+        vim.fn.timer_start(50, function()
+            vim.cmd([[PlugInstall]])
+            setup_barbecue(require('barbecue'))
+        end)
+    end
+end
+
 local lsp_plugin_available, lsp = pcall(require, 'lspconfig')
 if lsp_plugin_available then
     setup_lsp(lsp)
