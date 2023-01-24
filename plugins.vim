@@ -145,7 +145,7 @@ if has('nvim')
   if has('nvim-0.8')
     Plug 'SmiteshP/nvim-navic'
     " Plug 'utilyre/barbecue.nvim'
-    Plug 'mikewadsten/barbecue.nvim'
+    Plug 'mikewadsten/barbecue.nvim', { 'branch': 'bugfix/kinds-false' }
   endif
 endif
 
