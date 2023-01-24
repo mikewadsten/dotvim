@@ -88,21 +88,25 @@ endfunction
 
 function! zipline#git() abort
   if exists('b:zipline_utest')
-    let _ = get(b:zipline_utest, 'fugitive_head', '')
+    let head = get(b:zipline_utest, 'fugitive_head', '')
+  elseif !exists('g:loaded_fugitive')
+    return ''
+  elseif exists('*FugitiveHead')
+    let head = FugitiveHead()
   else
-    let _ = fugitive#head()
+    let head = fugitive#head()
   endif
-  if _ == ''
+  if head == ''
     " Just return empty if there's no head
     return ''
   endif
-  if strlen(_) > 18
+  if strlen(head) > 18
     " Avoid too-long heads
-    let _ = printf('%.18s...', _)
+    let head = printf('%.18s...', head)
   endif
   " Vim strips one leading space from value, because %{} is treated
   " as a 'flag' (src/buffer.c:4141). Work around that by having 2 spaces.
-  return printf('  %s ', _)
+  return printf('  %s ', head)
 endfunction
 
 let s:hgroup_activemode = 'Zipline_activemode'
