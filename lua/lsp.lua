@@ -1,8 +1,14 @@
 vim.o.updatetime = 250
 -- Show diagnostic info in a floating window when cursor is sitting
 vim.diagnostic.config({
-    virtual_text = false
+    virtual_text = false,
 })
+
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
+    vim.lsp.handlers.hover, {
+        border = 'rounded',
+    }
+)
 
 local opts = { noremap=true, silent=true }
 
@@ -113,7 +119,16 @@ local on_attach = function(client, bufnr)
 
     local lsp_sig_available, sig = pcall(require, 'lsp_signature')
     if lsp_sig_available then
-        sig.on_attach()
+        sig.on_attach({
+            -- doc_lines = 3,
+            handler_opts = {
+                border = "rounded"
+            },
+            -- Don't do virtual text to show the current parameter's name
+            hint_enable = false,
+            -- C-q toggles off the signature window while in Insert mode
+            toggle_key = '<C-q>',
+        })
     end
 end
 
