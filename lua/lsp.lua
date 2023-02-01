@@ -154,6 +154,7 @@ local function setup_lsp(lsp_)
             on_init = pylsp_on_init,
         },
         clangd = {
+            -- TODO
             on_init = nil,
         }
     }
@@ -175,6 +176,9 @@ local function setup_barbecue(bbq)
         },
         -- Again, I don't necessarily have fancy fonts with symbols installed
         kinds = false,
+        -- Right now I only have LSP working for Python, so let's not show
+        -- the winbar for C or C++ files.
+        exclude_filetypes = {"c", "cpp"},
     })
 end
 
