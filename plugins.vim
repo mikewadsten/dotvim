@@ -135,6 +135,8 @@ Plug 'vim-scripts/a.vim'
 
 Plug 'Vimjas/vim-python-pep8-indent'
 
+Plug 'wellle/targets.vim'
+
 if has('nvim')
   Plug 'neovim/nvim-lspconfig'
   Plug 'ray-x/lsp_signature.nvim'
