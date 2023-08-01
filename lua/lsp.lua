@@ -178,7 +178,12 @@ local function setup_barbecue(bbq)
         kinds = false,
         -- Right now I only have LSP working for Python, so let's not show
         -- the winbar for C or C++ files.
-        exclude_filetypes = {"c", "cpp"},
+        -- If we had a way to make this include_filetypes, we'd make it only
+        -- Python...
+        exclude_filetypes = {"c", "cpp", "text"},
+        theme = {
+            normal = { bg = "#000000" },
+        },
     })
 end
 
