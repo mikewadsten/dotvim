@@ -148,6 +148,8 @@ if has('nvim')
     Plug 'SmiteshP/nvim-navic'
     Plug 'utilyre/barbecue.nvim'
   endif
+
+  Plug 'debugloop/telescope-undo.nvim'
 endif
 
 if filereadable(expand('~/.vimrc.plugins.digi'))
