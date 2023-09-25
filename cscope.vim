@@ -1,3 +1,10 @@
+let s:trigger = has("nvim") ? "<C-Space>" : "<C-@>"
+if !has('cscope')
+  " Nvim 0.9 removed cscope entirely.
+  exe printf("nnoremap %s :echoerr 'cscope is not supported'<CR>", s:trigger)
+  finish
+endif
+
 " Script functions {{
 
   function! s:add_cscope(...) abort
@@ -261,7 +268,6 @@ endif
 
   nnoremap <silent>   <Plug>cscopePrompt :call <SID>prompt()<CR>
   " Launch prompt
-  let s:trigger = has("nvim") ? "<C-Space>" : "<C-@>"
   exe printf("nmap %s<Space>   <Plug>cscopePrompt", s:trigger)
   exe printf("nmap %s%s        <Plug>cscopePrompt", s:trigger, s:trigger)
   exe printf("nmap %s?         <Plug>cscopePrompt", s:trigger)
